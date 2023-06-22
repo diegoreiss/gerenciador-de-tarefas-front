@@ -201,28 +201,29 @@ class Ui_form_login(object):
         msg_box.setWindowTitle("Login")
 
         if self.is_campos_preenchidos():
-            login_router = LoginRouter()
-            response = login_router.login(campos)
+            try:
+                login_router = LoginRouter()
+                response = login_router.login(campos)
 
-            if response.status_code == 200:
-                os.environ["TOKEN_USUARIO"] = response.json()["access_token"]
-                os.environ["TOKEN_USUARIO_TYPE"] = response.json()["token_type"]
+                if response.status_code == 200:
+                    os.environ["TOKEN_USUARIO"] = response.json()["access_token"]
+                    os.environ["TOKEN_USUARIO_TYPE"] = response.json()["token_type"]
 
-                msg_box.setText("Login efetuado com sucesso!")
-                msg_box.exec()
+                    msg_box.setText("Login efetuado com sucesso!")
+                    msg_box.exec()
 
-            elif response.status_code == 403:
-                msg_response = response.json()["detail"]
+                elif response.status_code == 403:
+                    msg_response = response.json()["detail"]
+                    msg_box.setIcon(QMessageBox.Critical)
+                    msg_box.setText(msg_response)
+                    msg_box.exec()
+            except BaseException as e:
+                print(e)
                 msg_box.setIcon(QMessageBox.Critical)
-                msg_box.setText(msg_response)
-                msg_box.exec()
-            else:
-                msg_box.setIcon(QMessageBox.Critical)
-                msg_box.setText("Um erro ocorreu ao tentar fazer login. Tente novamente!")
+                msg_box.setText("Um erro ocorreu ao tentar se conectar no sistema. Tente novamente!")
                 msg_box.exec()
 
         else:
             msg_box.setIcon(QMessageBox.Critical)
             msg_box.setText("Preencha os campos!!!")
             msg_box.exec()
-
