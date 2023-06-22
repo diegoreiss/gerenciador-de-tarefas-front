@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 
 ################################################################################
 ## Form generated from reading UI file 'tela_inicial.ui'
@@ -9,6 +8,7 @@ import os
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
+import os
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
                             QMetaObject, QObject, QPoint, QRect,
                             QSize, QTime, QUrl, Qt)
@@ -20,9 +20,12 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QCommandLinkButton, QFra
                                QHBoxLayout, QHeaderView, QLabel, QLineEdit,
                                QMainWindow, QPlainTextEdit, QPushButton, QSizePolicy,
                                QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
-                               QTextEdit, QToolButton, QVBoxLayout, QWidget)
+                               QTextEdit, QToolButton, QVBoxLayout, QWidget, QFileDialog,
+                               QMessageBox, QAbstractItemView)
 from . import tela_login
 from ..Routers.usuario_router import UsuarioRouter
+from ..Routers.tarefa_router import TarefaRouter
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -297,8 +300,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addLayout(self.horizontalLayout_4)
 
         self.tableWidget = QTableWidget(self.page_tarefas)
-        if (self.tableWidget.columnCount() < 5):
-            self.tableWidget.setColumnCount(5)
+        if (self.tableWidget.columnCount() < 6):
+            self.tableWidget.setColumnCount(6)
         __qtablewidgetitem = QTableWidgetItem()
         __qtablewidgetitem.setTextAlignment(Qt.AlignCenter);
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
@@ -310,6 +313,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
         self.tableWidget.setObjectName(u"tableWidget")
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
@@ -645,6 +650,9 @@ class Ui_MainWindow(object):
 
         self.btn_contario = QToolButton(self.frame_right)
         self.btn_contario.setObjectName(u"btn_contario")
+        self.btn_contario.setStyleSheet(u"QToolButton:hover {\n"
+                                        "	background-color: rgb(27, 68, 120);\n"
+                                        "}")
 
         self.horizontalLayout_12.addWidget(self.btn_contario)
 
@@ -666,9 +674,15 @@ class Ui_MainWindow(object):
         self.btn_publicar_tarefa.setMinimumSize(QSize(0, 30))
         self.btn_publicar_tarefa.setMaximumSize(QSize(200, 16777215))
         self.btn_publicar_tarefa.setFont(font3)
-        self.btn_publicar_tarefa.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-                                               "background-color: rgb(35, 35, 35);\n"
-                                               "border:1px solid black;")
+        self.btn_publicar_tarefa.setStyleSheet(u"QPushButton {\n"
+                                               "	color: rgb(255, 255, 255);\n"
+                                               "	background-color: rgb(35, 35, 35);\n"
+                                               "	border:1px solid black;\n"
+                                               "}\n"
+                                               "\n"
+                                               "QPushButton:hover {\n"
+                                               "	background-color: rgb(27, 68, 120);\n"
+                                               "}")
 
         self.horizontalLayout_8.addWidget(self.btn_publicar_tarefa)
 
@@ -686,17 +700,28 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
-
         QMetaObject.connectSlotsByName(MainWindow)
 
         # me
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.caminho_anexo_professor = None
+        self.tarefas_professor_atual = None
+
         self.usuario_atual = self.get_usuario_atual()
-        print(self.usuario_atual)
+
         self.btn_page_sair.clicked.connect(self.deslogar)
         self.btn_page_conta.clicked.connect(self.goto_tela_conta)
-        self.configurar_tela_usuario()
+        self.btn_page_tarefas.clicked.connect(self.goto_tela_tarefas)
+        self.btn_criar.clicked.connect(self.goto_tela_criar_tarefa)
+        self.btn_anexo.clicked.connect(self.procurar_arquivo)
+        self.btn_publicar_tarefa.clicked.connect(self.criar_tarefa)
+        self.btn_deletar.clicked.connect(self.deletar_tarefa)
 
+        self.goto_tela_tarefas()
+        self.configurar_tela_usuario()
 
     # setupUi
 
@@ -712,19 +737,22 @@ class Ui_MainWindow(object):
         self.lbl_tarefas.setText(QCoreApplication.translate("MainWindow",
                                                             u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">TAREFAS</span></p></body></html>",
                                                             None))
-        self.btn_criar.setText("")
-        self.btn_editar.setText("")
-        self.btn_deletar.setText("")
+        self.btn_criar.setText(QCoreApplication.translate("MainWindow", u"Criar", None))
+        self.btn_editar.setText(QCoreApplication.translate("MainWindow", u"Editar", None))
+        self.btn_deletar.setText(QCoreApplication.translate("MainWindow", u"Excluir", None))
+
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"ID", None));
+        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(1)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"T\u00edtulo", None));
-        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(2)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Descri\u00e7\u00e3o", None));
-        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Status", None));
-        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(4)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Prioridade", None));
-        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
+        ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
         self.lbl_conta.setText(QCoreApplication.translate("MainWindow",
                                                           u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CONTA</span></p></body></html>",
                                                           None))
@@ -771,6 +799,7 @@ class Ui_MainWindow(object):
                                                                 None))
         self.btn_contario.setText(QCoreApplication.translate("MainWindow", u">", None))
         self.btn_publicar_tarefa.setText(QCoreApplication.translate("MainWindow", u"Publicar", None))
+
     # retranslateUi
 
     def get_usuario_atual(self):
@@ -796,10 +825,154 @@ class Ui_MainWindow(object):
     def goto_tela_conta(self):
         self.stackedWidget.setCurrentWidget(self.page_conta)
 
+    def limpar_campos_tarefas(self):
+        self.txt_titulo_tarefa.setText("")
+        self.txt_descricao_tarefa.setPlainText("")
+        self.txt_anexo.setText("")
+        self.comboBox_status_tarefa.setCurrentIndex(0)
+        self.comboBox_prioridade.setCurrentIndex(0)
+
+    def get_tarefa_by_id(self, id):
+        return list(filter(lambda x: x["id"] == id, self.tarefas_professor_atual))[0]
+
+    def deletar_tarefa(self):
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Deletar Tarefa")
+        try:
+            id_tarefa_selecionada = int(self.tableWidget.item(self.tableWidget.currentRow(), 0).text())
+            tarefa = self.get_tarefa_by_id(id_tarefa_selecionada)
+
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setText(f"Deseja exluir a tarefa {tarefa['titulo']} com o id {tarefa['id']}?")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            resultado = msg_box.exec()
+
+            if resultado == QMessageBox.StandardButton.Yes:
+                tarefa_router = TarefaRouter()
+                response = tarefa_router.delete_tarefa(id_tarefa_selecionada)
+
+                if response.status_code == 204:
+                    msg_box.setIcon(QMessageBox.Information)
+                    msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msg_box.setText(f"Tarefa com o id {tarefa['id']} removida")
+                    msg_box.exec()
+                    self.popular_tabela_tarefas_do_professor_atual()
+        except AttributeError:
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Escolha uma tarefa abaixo!!!")
+            msg_box.exec()
+        except BaseException as e:
+            print(e)
+
+    def goto_tela_tarefas(self):
+        self.limpar_campos_tarefas()
+        self.stackedWidget.setCurrentWidget(self.page_tarefas)
+
+    def ocultar_anexo_aluno(self):
+        self.label_10.setVisible(False)
+        self.btn_anexo_aluno.setVisible(False)
+        self.txt_anexo_aluno.setVisible(False)
+        self.btn_download_anexo_aluno.setVisible(False)
+
+    def ocultar_comentarios(self):
+        self.frame_right.setVisible(False)
+
+    def configuracao_tela_criar_tarefa_professor(self):
+        self.ocultar_anexo_aluno()
+        self.ocultar_comentarios()
+        self.btn_download_anexo_professor.setVisible(False)
+
+    def procurar_arquivo(self):
+        pwd = QFileDialog.getOpenFileName(self.page_criacao, "Selecione um arquivo")
+        file = pwd[0]
+        self.caminho_anexo_professor = file
+        self.txt_anexo.setText(file.split("/")[-1])
+
+    def get_campos_tarefa(self):
+        campos = {
+            "titulo": self.txt_titulo_tarefa.text(),
+            "descricao": self.txt_descricao_tarefa.toPlainText(),
+            "status": self.comboBox_status_tarefa.currentText(),
+            "prioridade": self.comboBox_prioridade.currentText(),
+        }
+
+        return campos
+
+    def is_campos_criar_tarefa_preenchidos(self):
+        boolean = (len(self.txt_titulo_tarefa.text()) != 0
+                   and len(self.txt_descricao_tarefa.toPlainText()) != 0
+                   and len(self.txt_anexo.text()) != 0)
+
+        return boolean
+
+    def criar_tarefa(self):
+        try:
+            campos = self.get_campos_tarefa()
+            tarefa_router = TarefaRouter()
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Information)
+
+            if self.is_campos_criar_tarefa_preenchidos():
+                response = tarefa_router.create_tarefa(data=campos, file=self.caminho_anexo_professor)
+                print(response.json())
+
+                if response.status_code == 201:
+                    nome_tarefa = response.json()["titulo"]
+                    msg_box.setText(f"Tarefa {nome_tarefa} criada com sucesso!")
+                    msg_box.exec()
+                    self.popular_tabela_tarefas_do_professor_atual()
+                    self.goto_tela_tarefas()
+                else:
+                    msg_box.setIcon(QMessageBox.Critical)
+                    msg_box.setText("Um erro ocorreu ao criar essa tarefa!")
+                    msg_box.exec()
+            else:
+                msg_box.setIcon(QMessageBox.Critical)
+                msg_box.setText("Preencha os campos!!!")
+                msg_box.exec()
+        except BaseException as e:
+            print(e)
+
+    def goto_tela_criar_tarefa(self):
+        self.stackedWidget.setCurrentWidget(self.page_criacao)
+        self.configuracao_tela_criar_tarefa_professor()
+
     def preencher_tela_conta(self):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
         self.txt_nome.setText(nome_completo)
         self.txt_usuario.setText(self.usuario_atual["nome_login"])
 
+    def configuracao_usuario_aluno(self):
+        pass
+
+    def popular_tabela_tarefas_do_professor_atual(self):
+        try:
+            tarefa_router = TarefaRouter()
+            response = tarefa_router.get_tarefas_usuario_atual()
+
+            if response.status_code == 200:
+                self.tableWidget.setRowCount(0)
+                self.tarefas_professor_atual = response.json()
+                self.tableWidget.setRowCount(len(self.tarefas_professor_atual))
+
+                for linha, tarefa in enumerate(self.tarefas_professor_atual):
+                    tarefa_list = [tarefa["id"], tarefa["titulo"], tarefa["descricao"],
+                                   tarefa["status"], tarefa["prioridade"], tarefa["anexo"].split("/")[-1]]
+
+                    for coluna, valor in enumerate(tarefa_list):
+                        item = QTableWidgetItem(str(valor))
+                        self.tableWidget.setItem(linha, coluna, item)
+        except BaseException as e:
+            print(e)
+
+    def configuracao_usuario_professor(self):
+        self.popular_tabela_tarefas_do_professor_atual()
+
     def configurar_tela_usuario(self):
         self.preencher_tela_conta()
+
+        match self.usuario_atual["funcao_id"]:
+            case 1:
+                self.configuracao_usuario_aluno()
+            case 2:
+                self.configuracao_usuario_professor()
