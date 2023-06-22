@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import InvalidURL
 from .router import Router
 
 
@@ -10,4 +11,9 @@ class LoginRouter(Router):
         url = f"{self._IP_ADDRESS}{endpoint}"
         headers = {"accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
 
-        return requests.post(url, headers=headers, data=data)
+        try:
+            return requests.post(url, headers=headers, data=data)
+        except InvalidURL as e:
+            raise e
+        except BaseException as e:
+            raise e
