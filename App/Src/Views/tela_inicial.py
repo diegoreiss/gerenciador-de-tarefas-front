@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QCommandLinkButton, QFra
                                QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
                                QTextEdit, QToolButton, QVBoxLayout, QWidget)
 from . import tela_login
+from ..Routers.usuario_router import UsuarioRouter
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -690,8 +691,12 @@ class Ui_MainWindow(object):
         QMetaObject.connectSlotsByName(MainWindow)
 
         # me
-
+        self.usuario_atual = self.get_usuario_atual()
+        print(self.usuario_atual)
         self.btn_page_sair.clicked.connect(self.deslogar)
+        self.btn_page_conta.clicked.connect(self.goto_tela_conta)
+        self.configurar_tela_usuario()
+
 
     # setupUi
 
@@ -768,6 +773,15 @@ class Ui_MainWindow(object):
         self.btn_publicar_tarefa.setText(QCoreApplication.translate("MainWindow", u"Publicar", None))
     # retranslateUi
 
+    def get_usuario_atual(self):
+        try:
+            usuario_router = UsuarioRouter()
+            response = usuario_router.get_usuario_atual()
+
+            return response.json()
+        except BaseException as e:
+            print(e)
+
     def deslogar(self):
         os.environ["TOKEN_USUARIO"] = ""
         os.environ["TOKEN_USUARIO_TYPE"] = ""
@@ -778,3 +792,14 @@ class Ui_MainWindow(object):
 
         self.window.show()
         self.main_window.hide()
+
+    def goto_tela_conta(self):
+        self.stackedWidget.setCurrentWidget(self.page_conta)
+
+    def preencher_tela_conta(self):
+        nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
+        self.txt_nome.setText(nome_completo)
+        self.txt_usuario.setText(self.usuario_atual["nome_login"])
+
+    def configurar_tela_usuario(self):
+        self.preencher_tela_conta()
