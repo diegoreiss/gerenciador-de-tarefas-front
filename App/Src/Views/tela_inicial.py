@@ -941,6 +941,8 @@ class Ui_MainWindow(object):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
         self.txt_nome.setText(nome_completo)
         self.txt_usuario.setText(self.usuario_atual["nome_login"])
+        self.txt_usuario.setDisabled(True)
+        self.txt_nome.setDisabled(True)
 
     def configuracao_usuario_aluno(self):
         pass
