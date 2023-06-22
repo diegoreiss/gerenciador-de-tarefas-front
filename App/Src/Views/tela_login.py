@@ -18,8 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCommandLinkButton, QFrame, QLabel,
                                QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget, QMessageBox)
-from . import tela_criar_conta
+                               QVBoxLayout, QWidget, QMessageBox, QMainWindow)
+from . import tela_criar_conta, tela_inicial
 from ..Routers.login_router import LoginRouter
 
 
@@ -167,6 +167,7 @@ class Ui_form_login(object):
                                                           None))
         self.btn_login.setText(QCoreApplication.translate("form_login", u"Entrar", None))
         self.clb_criarConta.setText(QCoreApplication.translate("form_login", u"Ainda n\u00e3o tenho uma conta!", None))
+
     # retranslateUi
 
     def goto_tela_criar_conta(self):
@@ -178,7 +179,12 @@ class Ui_form_login(object):
         self.form_login.hide()
 
     def goto_tela_principal(self):
-        pass
+        self.window = QMainWindow()
+        self.ui = tela_inicial.Ui_MainWindow()
+
+        self.ui.setupUi(self.window)
+        self.window.show()
+        self.form_login.hide()
 
     def get_campos(self):
         campos = {
@@ -211,6 +217,8 @@ class Ui_form_login(object):
 
                     msg_box.setText("Login efetuado com sucesso!")
                     msg_box.exec()
+
+                    self.goto_tela_principal()
 
                 elif response.status_code == 403:
                     msg_response = response.json()["detail"]
