@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 ################################################################################
 ## Form generated from reading UI file 'tela_inicial.ui'
@@ -9,17 +10,18 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+                           QFont, QFontDatabase, QGradient, QIcon,
+                           QImage, QKeySequence, QLinearGradient, QPainter,
+                           QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QCommandLinkButton, QFrame,
-    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
-    QMainWindow, QPlainTextEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
-    QTextEdit, QToolButton, QVBoxLayout, QWidget)
+                               QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+                               QMainWindow, QPlainTextEdit, QPushButton, QSizePolicy,
+                               QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
+                               QTextEdit, QToolButton, QVBoxLayout, QWidget)
+from . import tela_login
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -28,6 +30,7 @@ class Ui_MainWindow(object):
         MainWindow.resize(1000, 500)
         MainWindow.setMinimumSize(QSize(1000, 500))
         MainWindow.setStyleSheet(u"background-color: rgb(45, 45, 45);")
+        self.main_window = MainWindow
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -62,10 +65,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_logo.sizePolicy().hasHeightForWidth())
         self.btn_logo.setSizePolicy(sizePolicy)
         self.btn_logo.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"border: 0px solid;")
+                                    "border: 0px solid;")
 
         self.verticalLayout_2.addWidget(self.btn_logo)
-
 
         self.horizontalLayout.addWidget(self.frame_logo)
 
@@ -81,13 +83,11 @@ class Ui_MainWindow(object):
         font.setPointSize(36)
         self.lbl_logo.setFont(font)
         self.lbl_logo.setStyleSheet(u"color: rgb(255, 255, 255);")
-        self.lbl_logo.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.lbl_logo.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter)
 
         self.horizontalLayout_3.addWidget(self.lbl_logo)
 
-
         self.horizontalLayout.addWidget(self.frame_top)
-
 
         self.verticalLayout.addWidget(self.Top_Bar)
 
@@ -122,15 +122,15 @@ class Ui_MainWindow(object):
         self.btn_page_tarefas.setMinimumSize(QSize(0, 40))
         self.btn_page_tarefas.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_page_tarefas.setStyleSheet(u"QPushButton {\n"
-"	color: rgb(255, 255, 255);\n"
-"	background-color: rgb(35, 35, 35);\n"
-"	border: 0px solid;\n"
-"}\n"
-"QPushButton:hover {\n"
-"	background-color: rgb(85, 170, 255);\n"
-"\n"
-"	background-color: rgb(27, 68, 120);\n"
-"}")
+                                            "	color: rgb(255, 255, 255);\n"
+                                            "	background-color: rgb(35, 35, 35);\n"
+                                            "	border: 0px solid;\n"
+                                            "}\n"
+                                            "QPushButton:hover {\n"
+                                            "	background-color: rgb(85, 170, 255);\n"
+                                            "\n"
+                                            "	background-color: rgb(27, 68, 120);\n"
+                                            "}")
 
         self.verticalLayout_4.addWidget(self.btn_page_tarefas)
 
@@ -139,15 +139,15 @@ class Ui_MainWindow(object):
         self.btn_page_conta.setMinimumSize(QSize(0, 40))
         self.btn_page_conta.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_page_conta.setStyleSheet(u"QPushButton {\n"
-"	color: rgb(255, 255, 255);\n"
-"	background-color: rgb(35, 35, 35);\n"
-"	border: 0px solid;\n"
-"}\n"
-"QPushButton:hover {\n"
-"	background-color: rgb(85, 170, 255);\n"
-"\n"
-"	background-color: rgb(27, 68, 120);\n"
-"}")
+                                          "	color: rgb(255, 255, 255);\n"
+                                          "	background-color: rgb(35, 35, 35);\n"
+                                          "	border: 0px solid;\n"
+                                          "}\n"
+                                          "QPushButton:hover {\n"
+                                          "	background-color: rgb(85, 170, 255);\n"
+                                          "\n"
+                                          "	background-color: rgb(27, 68, 120);\n"
+                                          "}")
 
         self.verticalLayout_4.addWidget(self.btn_page_conta)
 
@@ -160,21 +160,19 @@ class Ui_MainWindow(object):
         self.btn_page_sair.setMinimumSize(QSize(0, 40))
         self.btn_page_sair.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_page_sair.setStyleSheet(u"QPushButton {\n"
-"	color: rgb(255, 255, 255);\n"
-"	background-color: rgb(35, 35, 35);\n"
-"	border: 0px solid;\n"
-"}\n"
-"QPushButton:hover {\n"
-"	background-color: rgb(85, 170, 255);\n"
-"\n"
-"	background-color: rgb(27, 68, 120);\n"
-"}")
+                                         "	color: rgb(255, 255, 255);\n"
+                                         "	background-color: rgb(35, 35, 35);\n"
+                                         "	border: 0px solid;\n"
+                                         "}\n"
+                                         "QPushButton:hover {\n"
+                                         "	background-color: rgb(85, 170, 255);\n"
+                                         "\n"
+                                         "	background-color: rgb(27, 68, 120);\n"
+                                         "}")
 
         self.verticalLayout_4.addWidget(self.btn_page_sair)
 
-
         self.verticalLayout_3.addWidget(self.frame_top_menus, 0, Qt.AlignTop)
-
 
         self.horizontalLayout_2.addWidget(self.frame_left_menu)
 
@@ -196,7 +194,7 @@ class Ui_MainWindow(object):
         font1.setPointSize(26)
         self.lbl_tarefas.setFont(font1)
         self.lbl_tarefas.setStyleSheet(u"color: #FFF;")
-        self.lbl_tarefas.setAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
+        self.lbl_tarefas.setAlignment(Qt.AlignRight | Qt.AlignTop | Qt.AlignTrailing)
 
         self.verticalLayout_7.addWidget(self.lbl_tarefas)
 
@@ -211,23 +209,23 @@ class Ui_MainWindow(object):
         self.btn_criar.setFont(font2)
         self.btn_criar.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_criar.setStyleSheet(u"QPushButton {\n"
-"background-color: rgb(27, 68, 120);\n"
-"image: url(:/newTaskIcon/add task icon.png);\n"
-"color: rgb(255, 255, 255);\n"
-"border-radius: 35px;\n"
-"border:1px solid black;\n"
-"}\n"
-"QPushButton:hover {\n"
-"	\n"
-"	background-color: rgb(38, 97, 170);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"	background-color: rgb(27, 68, 120);\n"
-"}\n"
-"\n"
-"\n"
-"\n"
-"")
+                                     "background-color: rgb(27, 68, 120);\n"
+                                     "image: url(:/newTaskIcon/add task icon.png);\n"
+                                     "color: rgb(255, 255, 255);\n"
+                                     "border-radius: 35px;\n"
+                                     "border:1px solid black;\n"
+                                     "}\n"
+                                     "QPushButton:hover {\n"
+                                     "	\n"
+                                     "	background-color: rgb(38, 97, 170);\n"
+                                     "}\n"
+                                     "QPushButton:pressed {\n"
+                                     "	background-color: rgb(27, 68, 120);\n"
+                                     "}\n"
+                                     "\n"
+                                     "\n"
+                                     "\n"
+                                     "")
         self.btn_criar.setIconSize(QSize(16, 16))
         self.btn_criar.setAutoDefault(False)
 
@@ -240,23 +238,23 @@ class Ui_MainWindow(object):
         self.btn_editar.setFont(font2)
         self.btn_editar.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_editar.setStyleSheet(u"QPushButton {\n"
-"background-color: rgb(27, 68, 120);\n"
-"image: url(:/newTaskIcon/add task icon.png);\n"
-"color: rgb(255, 255, 255);\n"
-"border-radius: 35px;\n"
-"border:1px solid black;\n"
-"}\n"
-"QPushButton:hover {\n"
-"	\n"
-"	background-color: rgb(38, 97, 170);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"	background-color: rgb(27, 68, 120);\n"
-"}\n"
-"\n"
-"\n"
-"\n"
-"")
+                                      "background-color: rgb(27, 68, 120);\n"
+                                      "image: url(:/newTaskIcon/add task icon.png);\n"
+                                      "color: rgb(255, 255, 255);\n"
+                                      "border-radius: 35px;\n"
+                                      "border:1px solid black;\n"
+                                      "}\n"
+                                      "QPushButton:hover {\n"
+                                      "	\n"
+                                      "	background-color: rgb(38, 97, 170);\n"
+                                      "}\n"
+                                      "QPushButton:pressed {\n"
+                                      "	background-color: rgb(27, 68, 120);\n"
+                                      "}\n"
+                                      "\n"
+                                      "\n"
+                                      "\n"
+                                      "")
         self.btn_editar.setIconSize(QSize(16, 16))
         self.btn_editar.setAutoDefault(False)
 
@@ -269,23 +267,23 @@ class Ui_MainWindow(object):
         self.btn_deletar.setFont(font2)
         self.btn_deletar.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_deletar.setStyleSheet(u"QPushButton {\n"
-"background-color: rgb(27, 68, 120);\n"
-"image: url(:/newTaskIcon/add task icon.png);\n"
-"color: rgb(255, 255, 255);\n"
-"border-radius: 35px;\n"
-"border:1px solid black;\n"
-"}\n"
-"QPushButton:hover {\n"
-"	\n"
-"	background-color: rgb(38, 97, 170);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"	background-color: rgb(27, 68, 120);\n"
-"}\n"
-"\n"
-"\n"
-"\n"
-"")
+                                       "background-color: rgb(27, 68, 120);\n"
+                                       "image: url(:/newTaskIcon/add task icon.png);\n"
+                                       "color: rgb(255, 255, 255);\n"
+                                       "border-radius: 35px;\n"
+                                       "border:1px solid black;\n"
+                                       "}\n"
+                                       "QPushButton:hover {\n"
+                                       "	\n"
+                                       "	background-color: rgb(38, 97, 170);\n"
+                                       "}\n"
+                                       "QPushButton:pressed {\n"
+                                       "	background-color: rgb(27, 68, 120);\n"
+                                       "}\n"
+                                       "\n"
+                                       "\n"
+                                       "\n"
+                                       "")
         self.btn_deletar.setIconSize(QSize(16, 16))
         self.btn_deletar.setAutoDefault(False)
 
@@ -294,7 +292,6 @@ class Ui_MainWindow(object):
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer)
-
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_4)
 
@@ -316,15 +313,15 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setStyleSheet(u"\n"
-"QHeaderView::section\n"
-"{\n"
-"background-color:rgb(27, 68, 120);\n"
-"color: white;\n"
-"};\n"
-"\n"
-"color: rgb(255, 255, 255);\n"
-"border:1px solid rgb(27, 68, 120);\n"
-"")
+                                       "QHeaderView::section\n"
+                                       "{\n"
+                                       "background-color:rgb(27, 68, 120);\n"
+                                       "color: white;\n"
+                                       "};\n"
+                                       "\n"
+                                       "color: rgb(255, 255, 255);\n"
+                                       "border:1px solid rgb(27, 68, 120);\n"
+                                       "")
         self.tableWidget.horizontalHeader().setDefaultSectionSize(176)
 
         self.verticalLayout_7.addWidget(self.tableWidget)
@@ -339,7 +336,7 @@ class Ui_MainWindow(object):
         self.lbl_conta.setMaximumSize(QSize(16777215, 50))
         self.lbl_conta.setFont(font1)
         self.lbl_conta.setStyleSheet(u"color: #FFF;")
-        self.lbl_conta.setAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
+        self.lbl_conta.setAlignment(Qt.AlignRight | Qt.AlignTop | Qt.AlignTrailing)
 
         self.verticalLayout_6.addWidget(self.lbl_conta)
 
@@ -358,9 +355,9 @@ class Ui_MainWindow(object):
         self.txt_nome.setMaximumSize(QSize(700, 16777215))
         self.txt_nome.setFont(font3)
         self.txt_nome.setStyleSheet(u"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;\n"
-"border-radius:4px;\n"
-"color: rgb(195, 195, 195);")
+                                    "border:1px solid black;\n"
+                                    "border-radius:4px;\n"
+                                    "color: rgb(195, 195, 195);")
 
         self.verticalLayout_6.addWidget(self.txt_nome)
 
@@ -376,9 +373,9 @@ class Ui_MainWindow(object):
         self.txt_usuario.setMaximumSize(QSize(700, 16777215))
         self.txt_usuario.setFont(font3)
         self.txt_usuario.setStyleSheet(u"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;\n"
-"border-radius:4px;\n"
-"color: rgb(195, 195, 195);")
+                                       "border:1px solid black;\n"
+                                       "border-radius:4px;\n"
+                                       "color: rgb(195, 195, 195);")
 
         self.verticalLayout_6.addWidget(self.txt_usuario)
 
@@ -399,7 +396,7 @@ class Ui_MainWindow(object):
         self.lbl_criacao.setMaximumSize(QSize(16777215, 50))
         self.lbl_criacao.setFont(font1)
         self.lbl_criacao.setStyleSheet(u"color: rgb(255, 255, 255);")
-        self.lbl_criacao.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.lbl_criacao.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
 
         self.verticalLayout_8.addWidget(self.lbl_criacao)
 
@@ -441,13 +438,12 @@ class Ui_MainWindow(object):
         self.txt_titulo_tarefa.setMinimumSize(QSize(60, 0))
         self.txt_titulo_tarefa.setMaximumSize(QSize(300, 16777215))
         self.txt_titulo_tarefa.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                             "background-color: rgb(35, 35, 35);\n"
+                                             "border:1px solid black;")
         self.txt_titulo_tarefa.setDragEnabled(False)
         self.txt_titulo_tarefa.setReadOnly(False)
 
         self.verticalLayout_10.addWidget(self.txt_titulo_tarefa)
-
 
         self.horizontalLayout_6.addLayout(self.verticalLayout_10)
 
@@ -471,11 +467,10 @@ class Ui_MainWindow(object):
         self.comboBox_status_tarefa.setMinimumSize(QSize(100, 0))
         self.comboBox_status_tarefa.setMaximumSize(QSize(200, 16777215))
         self.comboBox_status_tarefa.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
-"")
+                                                  "")
         self.comboBox_status_tarefa.setEditable(False)
 
         self.verticalLayout_11.addWidget(self.comboBox_status_tarefa)
-
 
         self.horizontalLayout_6.addLayout(self.verticalLayout_11)
 
@@ -501,9 +496,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.comboBox_prioridade)
 
-
         self.horizontalLayout_6.addLayout(self.verticalLayout_14)
-
 
         self.verticalLayout_13.addLayout(self.horizontalLayout_6)
 
@@ -518,11 +511,10 @@ class Ui_MainWindow(object):
         self.txt_descricao_tarefa.setObjectName(u"txt_descricao_tarefa")
         self.txt_descricao_tarefa.setEnabled(True)
         self.txt_descricao_tarefa.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                                "background-color: rgb(35, 35, 35);\n"
+                                                "border:1px solid black;")
 
         self.verticalLayout_9.addWidget(self.txt_descricao_tarefa)
-
 
         self.verticalLayout_13.addLayout(self.verticalLayout_9)
 
@@ -554,8 +546,8 @@ class Ui_MainWindow(object):
         self.txt_anexo.setMaximumSize(QSize(16777215, 16777215))
         self.txt_anexo.setAutoFillBackground(False)
         self.txt_anexo.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                     "background-color: rgb(35, 35, 35);\n"
+                                     "border:1px solid black;")
 
         self.horizontalLayout_7.addWidget(self.txt_anexo)
 
@@ -568,9 +560,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_7.addWidget(self.btn_download_anexo_professor)
 
-
         self.verticalLayout_12.addLayout(self.horizontalLayout_7)
-
 
         self.verticalLayout_13.addLayout(self.verticalLayout_12)
 
@@ -600,8 +590,8 @@ class Ui_MainWindow(object):
         self.txt_anexo_aluno.setMaximumSize(QSize(16777215, 16777215))
         self.txt_anexo_aluno.setAutoFillBackground(False)
         self.txt_anexo_aluno.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                           "background-color: rgb(35, 35, 35);\n"
+                                           "border:1px solid black;")
 
         self.horizontalLayout_11.addWidget(self.txt_anexo_aluno)
 
@@ -612,12 +602,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_11.addWidget(self.btn_download_anexo_aluno)
 
-
         self.verticalLayout_15.addLayout(self.horizontalLayout_11)
 
-
         self.verticalLayout_13.addLayout(self.verticalLayout_15)
-
 
         self.horizontalLayout_5.addWidget(self.frame_mid_2)
 
@@ -638,8 +625,8 @@ class Ui_MainWindow(object):
         self.txt_comentarios_publicados.setObjectName(u"txt_comentarios_publicados")
         self.txt_comentarios_publicados.setEnabled(False)
         self.txt_comentarios_publicados.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                                      "background-color: rgb(35, 35, 35);\n"
+                                                      "border:1px solid black;")
 
         self.verticalLayout_16.addWidget(self.txt_comentarios_publicados)
 
@@ -650,8 +637,8 @@ class Ui_MainWindow(object):
         self.txt_comentario = QLineEdit(self.frame_right)
         self.txt_comentario.setObjectName(u"txt_comentario")
         self.txt_comentario.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                          "background-color: rgb(35, 35, 35);\n"
+                                          "border:1px solid black;")
 
         self.horizontalLayout_12.addWidget(self.txt_comentario)
 
@@ -660,12 +647,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_12.addWidget(self.btn_contario)
 
-
         self.verticalLayout_16.addLayout(self.horizontalLayout_12)
 
-
         self.horizontalLayout_5.addWidget(self.frame_right)
-
 
         self.verticalLayout_8.addWidget(self.frame_mid)
 
@@ -682,11 +666,10 @@ class Ui_MainWindow(object):
         self.btn_publicar_tarefa.setMaximumSize(QSize(200, 16777215))
         self.btn_publicar_tarefa.setFont(font3)
         self.btn_publicar_tarefa.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(35, 35, 35);\n"
-"border:1px solid black;")
+                                               "background-color: rgb(35, 35, 35);\n"
+                                               "border:1px solid black;")
 
         self.horizontalLayout_8.addWidget(self.btn_publicar_tarefa)
-
 
         self.verticalLayout_8.addWidget(self.widget_foot)
 
@@ -694,9 +677,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.stackedWidget)
 
-
         self.horizontalLayout_2.addWidget(self.frame_pages)
-
 
         self.verticalLayout.addWidget(self.Content)
 
@@ -706,18 +687,26 @@ class Ui_MainWindow(object):
 
         self.stackedWidget.setCurrentIndex(2)
 
-
         QMetaObject.connectSlotsByName(MainWindow)
+
+        # me
+
+        self.btn_page_sair.clicked.connect(self.deslogar)
+
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.btn_logo.setText(QCoreApplication.translate("MainWindow", u"LOGO", None))
-        self.lbl_logo.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">Teen's</span></p></body></html>", None))
+        self.lbl_logo.setText(QCoreApplication.translate("MainWindow",
+                                                         u"<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">Teen's</span></p></body></html>",
+                                                         None))
         self.btn_page_tarefas.setText(QCoreApplication.translate("MainWindow", u"Tarefas", None))
         self.btn_page_conta.setText(QCoreApplication.translate("MainWindow", u"Conta", None))
         self.btn_page_sair.setText(QCoreApplication.translate("MainWindow", u"Sair", None))
-        self.lbl_tarefas.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">TAREFAS</span></p></body></html>", None))
+        self.lbl_tarefas.setText(QCoreApplication.translate("MainWindow",
+                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">TAREFAS</span></p></body></html>",
+                                                            None))
         self.btn_criar.setText("")
         self.btn_editar.setText("")
         self.btn_deletar.setText("")
@@ -731,33 +720,61 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Prioridade", None));
         ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
-        self.lbl_conta.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CONTA</span></p></body></html>", None))
+        self.lbl_conta.setText(QCoreApplication.translate("MainWindow",
+                                                          u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CONTA</span></p></body></html>",
+                                                          None))
         self.lbl_nome.setText(QCoreApplication.translate("MainWindow", u"Nome Completo", None))
         self.lbl_usuario.setText(QCoreApplication.translate("MainWindow", u"Usu\u00e1rio", None))
-        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CRIA\u00c7\u00c3O DE TAREFAS</span></p></body></html>", None))
-        self.lbl_titulo_tarefa.setText(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">Titulo</span></p></body></html>", None))
-        self.lbl_status_tarefa.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#ffffff;\">Status</span></p></body></html>", None))
+        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CRIA\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                            None))
+        self.lbl_titulo_tarefa.setText(QCoreApplication.translate("MainWindow",
+                                                                  u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                                                  "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                                                  "p, li { white-space: pre-wrap; }\n"
+                                                                  "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7pt; font-weight:400; font-style:normal;\">\n"
+                                                                  "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">Titulo</span></p></body></html>",
+                                                                  None))
+        self.lbl_status_tarefa.setText(QCoreApplication.translate("MainWindow",
+                                                                  u"<html><head/><body><p><span style=\" color:#ffffff;\">Status</span></p></body></html>",
+                                                                  None))
         self.comboBox_status_tarefa.setItemText(0, QCoreApplication.translate("MainWindow", u"Ativo", None))
         self.comboBox_status_tarefa.setItemText(1, QCoreApplication.translate("MainWindow", u"Inativo", None))
 
-        self.lbl_prioridade.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#ffffff;\">Prioridade</span></p><p><span style=\" color:#ffffff;\"><br/></span></p></body></html>", None))
+        self.lbl_prioridade.setText(QCoreApplication.translate("MainWindow",
+                                                               u"<html><head/><body><p><span style=\" color:#ffffff;\">Prioridade</span></p><p><span style=\" color:#ffffff;\"><br/></span></p></body></html>",
+                                                               None))
         self.comboBox_prioridade.setItemText(0, QCoreApplication.translate("MainWindow", u"Alta", None))
         self.comboBox_prioridade.setItemText(1, QCoreApplication.translate("MainWindow", u"Media", None))
         self.comboBox_prioridade.setItemText(2, QCoreApplication.translate("MainWindow", u"Baixa", None))
 
-        self.lbl_descricao_tarefa.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#ffffff;\">Descri\u00e7\u00e3o</span></p></body></html>", None))
-        self.lbl_anexo_professor.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#ffffff;\">Material de Referencia</span></p></body></html>", None))
+        self.lbl_descricao_tarefa.setText(QCoreApplication.translate("MainWindow",
+                                                                     u"<html><head/><body><p><span style=\" color:#ffffff;\">Descri\u00e7\u00e3o</span></p></body></html>",
+                                                                     None))
+        self.lbl_anexo_professor.setText(QCoreApplication.translate("MainWindow",
+                                                                    u"<html><head/><body><p><span style=\" color:#ffffff;\">Material de Referencia</span></p></body></html>",
+                                                                    None))
         self.btn_anexo.setText(QCoreApplication.translate("MainWindow", u"Anexo", None))
         self.btn_download_anexo_professor.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.label_10.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#f5f5f5;\">Entregar</span></p><p><span style=\" color:#f5f5f5;\"><br/></span></p></body></html>", None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow",
+                                                         u"<html><head/><body><p><span style=\" color:#f5f5f5;\">Entregar</span></p><p><span style=\" color:#f5f5f5;\"><br/></span></p></body></html>",
+                                                         None))
         self.btn_anexo_aluno.setText(QCoreApplication.translate("MainWindow", u"Anexo", None))
         self.btn_download_anexo_aluno.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.lbl_comentarios.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" color:#ffffff;\">Comentarios</span></p></body></html>", None))
+        self.lbl_comentarios.setText(QCoreApplication.translate("MainWindow",
+                                                                u"<html><head/><body><p align=\"center\"><span style=\" color:#ffffff;\">Comentarios</span></p></body></html>",
+                                                                None))
         self.btn_contario.setText(QCoreApplication.translate("MainWindow", u">", None))
         self.btn_publicar_tarefa.setText(QCoreApplication.translate("MainWindow", u"Publicar", None))
     # retranslateUi
 
+    def deslogar(self):
+        os.environ["TOKEN_USUARIO"] = ""
+        os.environ["TOKEN_USUARIO_TYPE"] = ""
+
+        self.window = QWidget()
+        self.ui = tela_login.Ui_form_login()
+        self.ui.setupUi(self.window)
+
+        self.window.show()
+        self.main_window.hide()
