@@ -9,6 +9,7 @@
 ################################################################################
 
 import os
+import traceback
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
                             QMetaObject, QObject, QPoint, QRect,
                             QSize, QTime, QUrl, Qt)
@@ -707,7 +708,7 @@ class Ui_MainWindow(object):
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.caminho_anexo_professor = None
+        self.caminho_anexo_professor = ""
         self.tarefas_professor_atual = None
 
         self.usuario_atual = self.get_usuario_atual()
@@ -835,36 +836,41 @@ class Ui_MainWindow(object):
 
     def get_tarefa_by_id(self):
         id_tarefa_selecionada = int(self.tableWidget.item(self.tableWidget.currentRow(), 0).text())
-        print(id_tarefa_selecionada)
         return list(filter(lambda x: x["id"] == id_tarefa_selecionada, self.tarefas_professor_atual))[0]
+
+    def configurar_campos_editar_tarefa(self, tarefa):
+        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">EDI\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                            None))
+        self.txt_titulo_tarefa.setText(tarefa["titulo"])
+        self.txt_descricao_tarefa.setPlainText(tarefa["descricao"])
+        self.comboBox_status_tarefa.setCurrentIndex(0 if tarefa["status"] == "ativo" else 1)
+        self.comboBox_prioridade.setCurrentIndex((0 if tarefa["prioridade"] == "alta"
+                                                  else (1 if tarefa["prioridade"] == "media" else 2)))
+        self.txt_anexo.setText(tarefa["anexo"].split("/")[-1] if tarefa["anexo"] else "")
+        self.btn_publicar_tarefa.setText("Atualizar")
 
     def editar_tarefa(self):
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Editar Tarefa")
+
         try:
-            campos = self.get_tarefa_by_id()
-            print(campos)
+            tarefa_selecionada = self.get_tarefa_by_id()
             self.goto_tela_criar_tarefa()
-            self.txt_titulo_tarefa.setText(campos["titulo"])
-            self.txt_descricao_tarefa.setPlainText(campos["descricao"])
-            self.comboBox_status_tarefa.setCurrentIndex(0 if campos["status"] == "ativo" else 1)
-            self.comboBox_prioridade.setCurrentText(0 if campos["prioridade"] == "alta" else (1 if campos["prioridade"] == "media" else 2))
-            self.txt_anexo.setText(campos["anexo"].split("/")[-1])
+            self.configurar_campos_editar_tarefa(tarefa_selecionada)
+            self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                                u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">EDI\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                                None))
         except AttributeError:
             msg_box.setIcon(QMessageBox.Critical)
             msg_box.setText("Escolha uma tarefa abaixo!!!")
             msg_box.exec()
 
-
-
     def deletar_tarefa(self):
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Deletar Tarefa")
         try:
-            print("to aqui")
             tarefa = self.get_tarefa_by_id()
-            print(tarefa)
-
             msg_box.setIcon(QMessageBox.Warning)
             msg_box.setText(f"Deseja exluir a tarefa {tarefa['titulo']} com o id {tarefa['id']}?")
             msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -901,6 +907,7 @@ class Ui_MainWindow(object):
         self.frame_right.setVisible(False)
 
     def configuracao_tela_criar_tarefa_professor(self):
+        self.btn_publicar_tarefa.setText("Publicar")
         self.ocultar_anexo_aluno()
         self.ocultar_comentarios()
         self.btn_download_anexo_professor.setVisible(False)
@@ -923,41 +930,50 @@ class Ui_MainWindow(object):
 
     def is_campos_criar_tarefa_preenchidos(self):
         boolean = (len(self.txt_titulo_tarefa.text()) != 0
-                   and len(self.txt_descricao_tarefa.toPlainText()) != 0
-                   and len(self.txt_anexo.text()) != 0)
+                   and len(self.txt_descricao_tarefa.toPlainText()) != 0)
 
         return boolean
 
     def criar_tarefa(self):
-        if self.btn_publicar_tarefa.text() == "Atualizar":
-            pass
-        else:
+        campos = self.get_campos_tarefa()
+        tarefa_router = TarefaRouter()
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+
+        if self.is_campos_criar_tarefa_preenchidos():
+            has_anexo = len(self.txt_anexo.text()) != 0 and os.path.exists(self.caminho_anexo_professor)
+
             try:
-                campos = self.get_campos_tarefa()
-                tarefa_router = TarefaRouter()
-                msg_box = QMessageBox()
-                msg_box.setIcon(QMessageBox.Information)
+                response = None
 
-                if self.is_campos_criar_tarefa_preenchidos():
-                    response = tarefa_router.create_tarefa(data=campos, file=self.caminho_anexo_professor)
-                    print(response.json())
+                if self.btn_publicar_tarefa.text() == "Atualizar":
+                    tarefa_selecionada = self.get_tarefa_by_id()
+                    response = tarefa_router.update_tarefa(tarefa_selecionada["id"], data=campos,
+                                                           file=self.caminho_anexo_professor, has_anexo=has_anexo)
+                elif self.btn_publicar_tarefa.text() == "Publicar":
+                    response = tarefa_router.create_tarefa(data=campos, file=self.caminho_anexo_professor,
+                                                           has_anexo=has_anexo)
 
-                    if response.status_code == 201:
-                        nome_tarefa = response.json()["titulo"]
-                        msg_box.setText(f"Tarefa {nome_tarefa} criada com sucesso!")
-                        msg_box.exec()
-                        self.popular_tabela_tarefas_do_professor_atual()
-                        self.goto_tela_tarefas()
-                    else:
-                        msg_box.setIcon(QMessageBox.Critical)
-                        msg_box.setText("Um erro ocorreu ao criar essa tarefa!")
-                        msg_box.exec()
+                if response.status_code in (200, 201):
+                    msg_box.setText("Operação concluida com sucesso!")
+                    msg_box.exec()
+                    self.tableWidget.clearSelection()
+                    self.popular_tabela_tarefas_do_professor_atual()
+                    self.goto_tela_tarefas()
                 else:
                     msg_box.setIcon(QMessageBox.Critical)
-                    msg_box.setText("Preencha os campos!!!")
+                    msg_box.setText("Um erro ocorreu ao realizar essa operação")
                     msg_box.exec()
             except BaseException as e:
                 print(e)
+                traceback.print_exc()
+                msg_box.setIcon(QMessageBox.Critical)
+                msg_box.setText("Um erro ocorreu no sistema!!!")
+                msg_box.exec()
+        else:
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Preencha os campos!!!")
+            msg_box.exec()
 
     def goto_tela_criar_tarefa(self):
         self.stackedWidget.setCurrentWidget(self.page_criacao)
@@ -967,8 +983,8 @@ class Ui_MainWindow(object):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
         self.txt_nome.setText(nome_completo)
         self.txt_usuario.setText(self.usuario_atual["nome_login"])
-        self.txt_usuario.setDisabled(True)
-        self.txt_nome.setDisabled(True)
+        self.txt_usuario.setEnabled(True)
+        self.txt_nome.setEnabled(True)
 
     def configuracao_usuario_aluno(self):
         pass
@@ -985,7 +1001,8 @@ class Ui_MainWindow(object):
 
                 for linha, tarefa in enumerate(self.tarefas_professor_atual):
                     tarefa_list = [tarefa["id"], tarefa["titulo"], tarefa["descricao"],
-                                   tarefa["status"], tarefa["prioridade"], tarefa["anexo"].split("/")[-1]]
+                                   tarefa["status"], tarefa["prioridade"],
+                                   tarefa["anexo"].split("/")[-1] if tarefa["anexo"] else "Sem Anexo"]
 
                     for coluna, valor in enumerate(tarefa_list):
                         item = QTableWidgetItem(str(valor))
@@ -1004,4 +1021,3 @@ class Ui_MainWindow(object):
                 self.configuracao_usuario_aluno()
             case 2:
                 self.configuracao_usuario_professor()
-
