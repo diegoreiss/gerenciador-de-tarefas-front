@@ -7,7 +7,6 @@ class ConfigIpAddress(ConfigParser):
         parent_path = os.path.dirname(os.getcwd())
         full_file_path = os.path.join(parent_path, 'api.ini')
 
-        print(full_file_path)
         self.read(full_file_path)
 
         if self.has_section(section):
