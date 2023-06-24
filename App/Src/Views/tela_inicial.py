@@ -920,8 +920,8 @@ class Ui_MainWindow(object):
 
     def get_campos_tarefa(self):
         campos = {
-            "titulo": self.txt_titulo_tarefa.text(),
-            "descricao": self.txt_descricao_tarefa.toPlainText(),
+            "titulo": self.txt_titulo_tarefa.text().strip(),
+            "descricao": self.txt_descricao_tarefa.toPlainText().strip(),
             "status": self.comboBox_status_tarefa.currentText(),
             "prioridade": self.comboBox_prioridade.currentText(),
         }
@@ -929,8 +929,8 @@ class Ui_MainWindow(object):
         return campos
 
     def is_campos_criar_tarefa_preenchidos(self):
-        boolean = (len(self.txt_titulo_tarefa.text()) != 0
-                   and len(self.txt_descricao_tarefa.toPlainText()) != 0)
+        boolean = (len(self.txt_titulo_tarefa.text().strip()) != 0
+                   and len(self.txt_descricao_tarefa.toPlainText().strip()) != 0)
 
         return boolean
 

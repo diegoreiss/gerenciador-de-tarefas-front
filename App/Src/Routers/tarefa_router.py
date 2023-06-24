@@ -18,10 +18,10 @@ class TarefaRouter(Router):
         except BaseException as e:
             raise e
 
-    def create_tarefa(self, data: dict, file: str, endpoint: str = "/tarefa/"):
-        url = f"{self._IP_ADDRESS}{endpoint}"
+    def create_tarefa(self, data: dict, file: str, has_anexo: bool = False, endpoint: str = "/tarefa/"):
+        url = f"{self._IP_ADDRESS}{endpoint}?has_anexo={has_anexo}"
         headers = {"accept": "application/json", "Authorization": f"{self._token_type} {self._token}"}
-        files = {"file": open(file, "rb")}
+        files = {"file": open(file, "rb")} if has_anexo else None
 
         try:
             return requests.post(url, headers=headers, data=data, files=files)
@@ -36,6 +36,18 @@ class TarefaRouter(Router):
 
         try:
             return requests.delete(url, headers=headers)
+        except InvalidURL as e:
+            raise e
+        except BaseException as e:
+            raise e
+
+    def update_tarefa(self, id: int, data: dict, file: str, has_anexo: bool = False, endpoint: str = "/tarefa/"):
+        url = f"{self._IP_ADDRESS}{endpoint}{id}?has_anexo={has_anexo}"
+        headers = {"Authorization": f"{self._token_type} {self._token}"}
+        files = {"file": open(file, "rb")} if has_anexo else None
+
+        try:
+            return requests.put(url, headers=headers, data=data, files=files)
         except InvalidURL as e:
             raise e
         except BaseException as e:
