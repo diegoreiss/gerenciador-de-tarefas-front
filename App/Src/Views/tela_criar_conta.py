@@ -278,10 +278,10 @@ class Ui_form_cadastro(object):
 
     def get_campos(self):
         campos = {
-            "nome": self.txt_nome.text(),
-            "sobrenome": self.txt_sobrenome.text(),
-            "nome_login": self.txt_username.text(),
-            "senha_hash": self.txt_senha.text(),
+            "nome": self.txt_nome.text().strip(),
+            "sobrenome": self.txt_sobrenome.text().strip(),
+            "nome_login": self.txt_username.text().strip(),
+            "senha_hash": self.txt_senha.text().strip(),
             "funcao_id": self.comboBox_funcao.currentIndex()
         }
 
@@ -296,11 +296,12 @@ class Ui_form_cadastro(object):
                     child.setCurrentIndex(0)
 
     def is_campos_preenchidos(self):
-        boolean = (len(self.txt_nome.text()) != 0
-                   and len(self.txt_sobrenome.text()) != 0
-                   and len(self.txt_username.text()) != 0
-                   and len(self.txt_senha.text()) != 0
-                   and self.comboBox_funcao.currentIndex() != 0)
+        campos = self.get_campos()
+        boolean = (len(campos["nome"]) != 0
+                   and len(campos["sobrenome"]) != 0
+                   and len(campos["nome_login"]) != 0
+                   and len(campos["senha_hash"]) != 0
+                   and campos["funcao_id"] != 0)
 
         return boolean
 
