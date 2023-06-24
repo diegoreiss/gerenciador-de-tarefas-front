@@ -573,11 +573,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_15 = QVBoxLayout()
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.label_10 = QLabel(self.frame_mid_2)
-        self.label_10.setObjectName(u"label_10")
-        self.label_10.setMaximumSize(QSize(16777215, 17))
+        self.lbl_anexo_aluno = QLabel(self.frame_mid_2)
+        self.lbl_anexo_aluno.setObjectName(u"label_10")
+        self.lbl_anexo_aluno.setMaximumSize(QSize(16777215, 17))
 
-        self.verticalLayout_15.addWidget(self.label_10)
+        self.verticalLayout_15.addWidget(self.lbl_anexo_aluno)
 
         self.horizontalLayout_11 = QHBoxLayout()
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
@@ -721,6 +721,7 @@ class Ui_MainWindow(object):
         self.btn_publicar_tarefa.clicked.connect(self.criar_tarefa)
         self.btn_deletar.clicked.connect(self.deletar_tarefa)
         self.btn_editar.clicked.connect(self.editar_tarefa)
+        self.tableWidget.itemDoubleClicked.connect(self.goto_tela_view_tarefa)
 
         self.goto_tela_tarefas()
         self.configurar_tela_usuario()
@@ -791,9 +792,9 @@ class Ui_MainWindow(object):
                                                                     None))
         self.btn_anexo.setText(QCoreApplication.translate("MainWindow", u"Anexo", None))
         self.btn_download_anexo_professor.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.label_10.setText(QCoreApplication.translate("MainWindow",
-                                                         u"<html><head/><body><p><span style=\" color:#f5f5f5;\">Entregar</span></p><p><span style=\" color:#f5f5f5;\"><br/></span></p></body></html>",
-                                                         None))
+        self.lbl_anexo_aluno.setText(QCoreApplication.translate("MainWindow",
+                                                                u"<html><head/><body><p><span style=\" color:#f5f5f5;\">Entregar</span></p><p><span style=\" color:#f5f5f5;\"><br/></span></p></body></html>",
+                                                                None))
         self.btn_anexo_aluno.setText(QCoreApplication.translate("MainWindow", u"Anexo", None))
         self.btn_download_anexo_aluno.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.lbl_comentarios.setText(QCoreApplication.translate("MainWindow",
@@ -853,14 +854,12 @@ class Ui_MainWindow(object):
     def editar_tarefa(self):
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Editar Tarefa")
+        self.btn_anexo.setEnabled(True)
 
         try:
             tarefa_selecionada = self.get_tarefa_by_id()
             self.goto_tela_criar_tarefa()
             self.configurar_campos_editar_tarefa(tarefa_selecionada)
-            self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
-                                                                u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">EDI\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
-                                                                None))
         except AttributeError:
             msg_box.setIcon(QMessageBox.Critical)
             msg_box.setText("Escolha uma tarefa abaixo!!!")
@@ -897,20 +896,28 @@ class Ui_MainWindow(object):
         self.limpar_campos_tarefas()
         self.stackedWidget.setCurrentWidget(self.page_tarefas)
 
-    def ocultar_anexo_aluno(self):
-        self.label_10.setVisible(False)
-        self.btn_anexo_aluno.setVisible(False)
-        self.txt_anexo_aluno.setVisible(False)
-        self.btn_download_anexo_aluno.setVisible(False)
+    def controle_habilitar_campos(self, *campos, enable=True):
+        for campo in campos:
+            campo.setEnabled(enable)
 
-    def ocultar_comentarios(self):
-        self.frame_right.setVisible(False)
+    def controle_visualizar_campos(self, *campos, visible=True):
+        for campo in campos:
+            campo.setVisible(visible)
 
     def configuracao_tela_criar_tarefa_professor(self):
+        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CRIA\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                            None))
+        campos = (self.txt_titulo_tarefa, self.txt_descricao_tarefa, self.comboBox_status_tarefa,
+                  self.comboBox_prioridade, self.btn_anexo)
+        campos_para_esconder = (self.lbl_anexo_aluno, self.btn_anexo_aluno, self.txt_anexo_aluno,
+                                self.btn_download_anexo_aluno, self.btn_download_anexo_professor, self.frame_right)
+
+        self.controle_habilitar_campos(*campos)
+        self.controle_visualizar_campos(*campos_para_esconder, visible=False)
+
+        self.btn_publicar_tarefa.setVisible(True)
         self.btn_publicar_tarefa.setText("Publicar")
-        self.ocultar_anexo_aluno()
-        self.ocultar_comentarios()
-        self.btn_download_anexo_professor.setVisible(False)
 
     def procurar_arquivo(self):
         pwd = QFileDialog.getOpenFileName(self.page_criacao, "Selecione um arquivo")
@@ -929,18 +936,20 @@ class Ui_MainWindow(object):
         return campos
 
     def is_campos_criar_tarefa_preenchidos(self):
-        boolean = (len(self.txt_titulo_tarefa.text().strip()) != 0
-                   and len(self.txt_descricao_tarefa.toPlainText().strip()) != 0)
+        campos = self.get_campos_tarefa()
+
+        boolean = (len(campos["titulo"]) != 0
+                   and len(campos["descricao"]) != 0)
 
         return boolean
 
     def criar_tarefa(self):
-        campos = self.get_campos_tarefa()
-        tarefa_router = TarefaRouter()
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
 
         if self.is_campos_criar_tarefa_preenchidos():
+            campos = self.get_campos_tarefa()
+            tarefa_router = TarefaRouter()
             has_anexo = len(self.txt_anexo.text()) != 0 and os.path.exists(self.caminho_anexo_professor)
 
             try:
@@ -982,9 +991,9 @@ class Ui_MainWindow(object):
     def preencher_tela_conta(self):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
         self.txt_nome.setText(nome_completo)
+        self.txt_nome.setEnabled(False)
         self.txt_usuario.setText(self.usuario_atual["nome_login"])
-        self.txt_usuario.setEnabled(True)
-        self.txt_nome.setEnabled(True)
+        self.txt_usuario.setEnabled(False)
 
     def configuracao_usuario_aluno(self):
         pass
@@ -1021,3 +1030,20 @@ class Ui_MainWindow(object):
                 self.configuracao_usuario_aluno()
             case 2:
                 self.configuracao_usuario_professor()
+
+    def configuracao_tela_view_tarefa(self):
+        campos_para_desabilitar = (self.txt_titulo_tarefa, self.txt_descricao_tarefa, self.comboBox_status_tarefa,
+                                   self.comboBox_prioridade)
+        campos_para_esconder = (self.btn_anexo, self.lbl_anexo_aluno, self.btn_anexo_aluno,
+                                self.txt_anexo_aluno, self.btn_download_anexo_aluno, self.btn_publicar_tarefa)
+        campos_para_mostrar = (self.btn_download_anexo_professor, self.frame_right)
+
+        self.controle_habilitar_campos(*campos_para_desabilitar, enable=False)
+        self.controle_visualizar_campos(*campos_para_esconder, visible=False)
+        self.controle_visualizar_campos(*campos_para_mostrar, visible=True)
+
+        self.configurar_campos_editar_tarefa(self.get_tarefa_by_id())
+
+    def goto_tela_view_tarefa(self):
+        self.configuracao_tela_view_tarefa()
+        self.stackedWidget.setCurrentWidget(self.page_criacao)
