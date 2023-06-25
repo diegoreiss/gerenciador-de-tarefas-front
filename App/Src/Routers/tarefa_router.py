@@ -52,3 +52,15 @@ class TarefaRouter(Router):
             raise e
         except BaseException as e:
             raise e
+
+    def download_tarefa(self, file_path: str, endpoint: str = "/tarefa/download/"):
+        url = f"{self._IP_ADDRESS}{endpoint}"
+        headers = {"accept": "application/json", "Authorization": f"{self._token_type} {self._token}"}
+        params = {"file_path": file_path}
+
+        try:
+            return requests.get(url, headers=headers, params=params)
+        except InvalidURL as e:
+            raise e
+        except BaseException as e:
+            raise e
