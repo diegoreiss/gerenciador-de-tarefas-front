@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 ################################################################################
 ## Form generated from reading UI file 'tela_inicial.ui'
@@ -8,8 +9,6 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-import os
-import traceback
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
                             QMetaObject, QObject, QPoint, QRect,
                             QSize, QTime, QUrl, Qt)
@@ -21,11 +20,11 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QCommandLinkButton, QFra
                                QHBoxLayout, QHeaderView, QLabel, QLineEdit,
                                QMainWindow, QPlainTextEdit, QPushButton, QSizePolicy,
                                QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
-                               QTextEdit, QToolButton, QVBoxLayout, QWidget, QFileDialog,
-                               QMessageBox, QAbstractItemView)
-from . import tela_login
+                               QTextEdit, QToolButton, QVBoxLayout, QWidget, QMessageBox,
+                               QAbstractItemView, QFileDialog)
 from ..Routers.usuario_router import UsuarioRouter
 from ..Routers.tarefa_router import TarefaRouter
+from . import tela_login
 
 
 class Ui_MainWindow(object):
@@ -573,11 +572,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_15 = QVBoxLayout()
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.lbl_anexo_aluno = QLabel(self.frame_mid_2)
-        self.lbl_anexo_aluno.setObjectName(u"label_10")
-        self.lbl_anexo_aluno.setMaximumSize(QSize(16777215, 17))
+        self.label_10 = QLabel(self.frame_mid_2)
+        self.label_10.setObjectName(u"label_10")
+        self.label_10.setMaximumSize(QSize(16777215, 17))
 
-        self.verticalLayout_15.addWidget(self.lbl_anexo_aluno)
+        self.verticalLayout_15.addWidget(self.label_10)
 
         self.horizontalLayout_11 = QHBoxLayout()
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
@@ -659,6 +658,20 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_16.addLayout(self.horizontalLayout_12)
 
+        self.pushButton = QPushButton(self.frame_right)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setStyleSheet(u"QPushButton {\n"
+                                      "	color: rgb(255, 255, 255);\n"
+                                      "	background-color: rgb(35, 35, 35);\n"
+                                      "	border:1px solid black;\n"
+                                      "}\n"
+                                      "\n"
+                                      "QPushButton:hover {\n"
+                                      "	background-color: rgb(27, 68, 120);\n"
+                                      "}")
+
+        self.verticalLayout_16.addWidget(self.pushButton)
+
         self.horizontalLayout_5.addWidget(self.frame_right)
 
         self.verticalLayout_8.addWidget(self.frame_mid)
@@ -701,30 +714,54 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+        self.stackedWidget.setCurrentIndex(2)
+
         QMetaObject.connectSlotsByName(MainWindow)
 
         # me
+
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableWidget.cellDoubleClicked.connect(self.configuracao_tela_vizualizacao_tarefas)
 
-        self.caminho_anexo_professor = ""
+        self.qt_campos_para_limpar = (self.txt_titulo_tarefa, self.comboBox_status_tarefa, self.comboBox_prioridade,
+                                      self.txt_descricao_tarefa, self.txt_anexo, self.txt_anexo_aluno,
+                                      self.txt_comentario)
+
+        self.campos_para_habilitar_tela_criar_editar = (self.txt_titulo_tarefa, self.comboBox_status_tarefa,
+                                                        self.comboBox_prioridade, self.txt_descricao_tarefa)
+        self.campos_para_esconder_tela_criar_editar = (self.btn_download_anexo_professor, self.label_10,
+                                                       self.btn_anexo_aluno, self.txt_anexo_aluno,
+                                                       self.btn_download_anexo_aluno, self.frame_right)
+
+        self.campos_para_esconder_tela_vizualizar_tarefa = (self.label_10, self.btn_anexo_aluno, self.txt_anexo_aluno,
+                                                            self.btn_download_anexo_aluno, self.btn_anexo,
+                                                            self.btn_publicar_tarefa)
+        self.campos_para_desabilitar_tela_vizualizar_tarefa = (self.txt_titulo_tarefa, self.comboBox_status_tarefa,
+                                                               self.comboBox_prioridade, self.txt_descricao_tarefa)
+
+        self.usuario_atual = Ui_MainWindow.get_usuario_atual()
+
         self.tarefas_professor_atual = None
+        self.caminho_anexo = ""
 
-        self.usuario_atual = self.get_usuario_atual()
-
+        self.btn_page_tarefas.clicked.connect(self.configuracao_btn_tarefas)
+        self.btn_page_conta.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.page_conta))
         self.btn_page_sair.clicked.connect(self.deslogar)
-        self.btn_page_conta.clicked.connect(self.goto_tela_conta)
-        self.btn_page_tarefas.clicked.connect(self.goto_tela_tarefas)
-        self.btn_criar.clicked.connect(self.goto_tela_criar_tarefa)
-        self.btn_anexo.clicked.connect(self.procurar_arquivo)
-        self.btn_publicar_tarefa.clicked.connect(self.criar_tarefa)
-        self.btn_deletar.clicked.connect(self.deletar_tarefa)
-        self.btn_editar.clicked.connect(self.editar_tarefa)
-        self.tableWidget.itemDoubleClicked.connect(self.goto_tela_view_tarefa)
 
-        self.goto_tela_tarefas()
+        self.btn_criar.clicked.connect(lambda: self.operacoes_tarefa(self.btn_criar))
+        self.btn_editar.clicked.connect(lambda: self.operacoes_tarefa(self.btn_editar))
+        self.btn_deletar.clicked.connect(self.deletar_tarefa)
+
+        self.btn_anexo.clicked.connect(lambda: self.procurar_arquivo())
+        self.btn_publicar_tarefa.clicked.connect(self.criar_tarefa)
+
+        self.btn_download_anexo_professor.clicked.connect(lambda: self.download_arquivo())
+        self.btn_download_anexo_aluno.clicked.connect(lambda: self.download_arquivo(False))
+
         self.configurar_tela_usuario()
+        self.stackedWidget.setCurrentWidget(self.page_tarefas)
 
     # setupUi
 
@@ -743,7 +780,6 @@ class Ui_MainWindow(object):
         self.btn_criar.setText(QCoreApplication.translate("MainWindow", u"Criar", None))
         self.btn_editar.setText(QCoreApplication.translate("MainWindow", u"Editar", None))
         self.btn_deletar.setText(QCoreApplication.translate("MainWindow", u"Excluir", None))
-
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"ID", None));
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(1)
@@ -754,8 +790,8 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Status", None));
         ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(4)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Prioridade", None));
-        ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
+        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(5)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
         self.lbl_conta.setText(QCoreApplication.translate("MainWindow",
                                                           u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CONTA</span></p></body></html>",
                                                           None))
@@ -792,27 +828,303 @@ class Ui_MainWindow(object):
                                                                     None))
         self.btn_anexo.setText(QCoreApplication.translate("MainWindow", u"Anexo", None))
         self.btn_download_anexo_professor.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.lbl_anexo_aluno.setText(QCoreApplication.translate("MainWindow",
-                                                                u"<html><head/><body><p><span style=\" color:#f5f5f5;\">Entregar</span></p><p><span style=\" color:#f5f5f5;\"><br/></span></p></body></html>",
-                                                                None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow",
+                                                         u"<html><head/><body><p><span style=\" color:#f5f5f5;\">Entregar</span></p><p><span style=\" color:#f5f5f5;\"><br/></span></p></body></html>",
+                                                         None))
         self.btn_anexo_aluno.setText(QCoreApplication.translate("MainWindow", u"Anexo", None))
         self.btn_download_anexo_aluno.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.lbl_comentarios.setText(QCoreApplication.translate("MainWindow",
                                                                 u"<html><head/><body><p align=\"center\"><span style=\" color:#ffffff;\">Comentarios</span></p></body></html>",
                                                                 None))
         self.btn_contario.setText(QCoreApplication.translate("MainWindow", u">", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Mais Detalhes", None))
         self.btn_publicar_tarefa.setText(QCoreApplication.translate("MainWindow", u"Publicar", None))
 
     # retranslateUi
 
-    def get_usuario_atual(self):
-        try:
-            usuario_router = UsuarioRouter()
-            response = usuario_router.get_usuario_atual()
+    @staticmethod
+    def controle_habilitar_campos(enable: bool, *campos):
+        for campo in campos:
+            campo.setEnabled(enable)
 
-            return response.json()
+    @staticmethod
+    def controle_vizualizar_campos(visible: bool, *campos):
+        for campo in campos:
+            campo.setVisible(visible)
+
+    def procurar_arquivo(self, is_anexo_professor=True):
+        self.caminho_anexo = QFileDialog.getOpenFileName(self.page_criacao, "Selecione um arquivo")[0]
+        filename = self.caminho_anexo.split("/")[-1]
+
+        if is_anexo_professor:
+            self.txt_anexo.setText(filename)
+        else:
+            self.txt_anexo_aluno.setText(filename)
+
+    def download_arquivo(self, is_anexo_professor=True):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Download Anexo")
+
+        try:
+            tarefa = self.get_tarefa_by_id()
+            tarefa_router = TarefaRouter()
+            response = tarefa_router.download_tarefa(tarefa["anexo"])
+            file_name, _ = QFileDialog.getSaveFileName(self.page_criacao, "Salve o arquivo",
+                                                       self.txt_anexo.text() if is_anexo_professor
+                                                       else self.txt_anexo_aluno.text())
+
+            if response.status_code != 200:
+                return
+
+            with open(file_name, "wb") as file_obj:
+                file_obj.write(response.content)
+
+            msg_box.setText("Download Realizado com sucesso!!!")
+            msg_box.exec()
+
+        except AttributeError as e:
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Um erro ocorreu ao realizar essa operação")
+            msg_box.exec()
         except BaseException as e:
             print(e)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Um erro ocorreu no sistema ao realizar essa operação")
+            msg_box.exec()
+
+    @staticmethod
+    def get_usuario_atual():
+        try:
+            usuario_router = UsuarioRouter()
+            return usuario_router.get_usuario_atual().json()
+        except BaseException as e:
+            print(e)
+
+    def get_tarefa_by_id(self):
+        id_tarefa_selecionada = int(self.tableWidget.item(self.tableWidget.currentRow(), 0).text())
+
+        return list(filter(lambda tarefa: tarefa["id"] == id_tarefa_selecionada, self.tarefas_professor_atual))[0]
+
+    def get_campos_criar_tarefa(self):
+        return {
+            "titulo": self.txt_titulo_tarefa.text().strip(),
+            "descricao": self.txt_descricao_tarefa.toPlainText().strip(),
+            "status": self.comboBox_status_tarefa.currentText(),
+            "prioridade": self.comboBox_prioridade.currentText()
+        }
+
+    def get_campos_editar_tarefa(self):
+        try:
+            tarefa_selecionada = self.get_tarefa_by_id()
+            index_combo_box_prioridade = (0 if tarefa_selecionada["prioridade"] == "alta"
+                                          else (1 if tarefa_selecionada["prioridade"] == "media" else 2))
+            return {
+                self.txt_titulo_tarefa: tarefa_selecionada["titulo"],
+                self.txt_descricao_tarefa: tarefa_selecionada["descricao"],
+                self.comboBox_status_tarefa: 0 if tarefa_selecionada["status"] == "ativo" else 1,
+                self.comboBox_prioridade: index_combo_box_prioridade,
+                self.txt_anexo: tarefa_selecionada["anexo"].split("/")[-1] if tarefa_selecionada["anexo"] else ""
+            }
+        except AttributeError as e:
+            raise e
+
+    def is_campos_criar_tarefa_preenchidos(self) -> bool:
+        return (len(self.get_campos_criar_tarefa()["titulo"]) != 0
+                and len(self.get_campos_criar_tarefa()["descricao"]) != 0)
+
+    def has_anexo(self, is_anexo_professor=True) -> bool:
+        return len(self.txt_anexo.text()) != 0 if is_anexo_professor else len(self.txt_anexo_aluno.text()) != 0
+
+    def criar_tarefa(self):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+
+        if self.is_campos_criar_tarefa_preenchidos():
+            try:
+                print(self.caminho_anexo)
+                has_anexo = self.has_anexo() and os.path.exists(self.caminho_anexo)
+                campos = self.get_campos_criar_tarefa()
+                tarefa_router = TarefaRouter()
+                response = None
+
+                if self.btn_publicar_tarefa.text() == "Atualizar":
+                    id_tarefa_selecionada = self.get_tarefa_by_id()["id"]
+                    response = tarefa_router.update_tarefa(id_tarefa_selecionada, data=campos, file=self.caminho_anexo,
+                                                           has_anexo=has_anexo)
+                elif self.btn_publicar_tarefa.text() == "Publicar":
+                    response = tarefa_router.create_tarefa(data=campos, file=self.caminho_anexo, has_anexo=has_anexo)
+
+                if response.status_code in (200, 201):
+                    msg_box.setText("Operação concluida com sucesso!")
+                    msg_box.exec()
+                    self.popular_tabela_tarefas_professor_atual()
+                    self.configuracao_btn_tarefas()
+                else:
+                    msg_box.setIcon(QMessageBox.Critical)
+                    msg_box.setText("Ocorreu um erro no sistema ao realizar essa operação")
+                    msg_box.exec()
+            except AttributeError as e:
+                raise e
+            except BaseException as e:
+                raise e
+        else:
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Preencha os Campos!!!")
+            msg_box.exec()
+
+    def deletar_tarefa(self):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Deletar Tarefa")
+
+        try:
+            tarefa_selecionada = self.get_tarefa_by_id()
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setText(f"Deseja excluir a tarefa {tarefa_selecionada['titulo']} "
+                            f"com o id {tarefa_selecionada['id']}")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            resultado = msg_box.exec()
+
+            if resultado != QMessageBox.StandardButton.Yes:
+                return
+
+            tarefa_router = TarefaRouter()
+            response = tarefa_router.delete_tarefa(tarefa_selecionada["id"])
+
+            if response.status_code == 204:
+                msg_box.setIcon(QMessageBox.Information)
+                msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msg_box.setText(f"Tarefa {tarefa_selecionada['id']} com o id {tarefa_selecionada['id']} removida!")
+                msg_box.exec()
+                self.popular_tabela_tarefas_professor_atual()
+            else:
+                msg_box.setIcon(QMessageBox.Critical)
+                msg_box.setText("Um erro ocorreu ao realizar essa operação")
+                msg_box.exec()
+        except AttributeError as e:
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Escolha uma tarefa abaixo!!!")
+            msg_box.exec()
+        except BaseException as e:
+            print(e)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Um erro ocorreu no sistema ao tentar realizar essa operação")
+            msg_box.exec()
+
+    def limpar_campos(self):
+        for campo in self.qt_campos_para_limpar:
+            if isinstance(campo, (QLineEdit, QPlainTextEdit)):
+                campo.clear()
+            elif isinstance(campo, QComboBox):
+                campo.setCurrentIndex(0)
+
+    def popular_campos_editar_tarefa(self):
+        try:
+            for key, value in self.get_campos_editar_tarefa().items():
+                if isinstance(key, QLineEdit):
+                    key.setText(value)
+                elif isinstance(key, QPlainTextEdit):
+                    key.setPlainText(value)
+                elif isinstance(key, QComboBox):
+                    key.setCurrentIndex(value)
+
+            self.btn_publicar_tarefa.setText("Atualizar")
+        except AttributeError as e:
+            raise e
+
+    def configuracoes_criar_tarefa(self):
+        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CRIA\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                            None))
+        Ui_MainWindow.controle_vizualizar_campos(False, *self.campos_para_esconder_tela_criar_editar)
+        self.btn_publicar_tarefa.setVisible(True)
+        self.btn_publicar_tarefa.setText("Publicar")
+
+    def configuracoes_editar_tarefa(self):
+        try:
+            self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                                u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">EDI\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                                None))
+            self.btn_publicar_tarefa.setVisible(True)
+            self.btn_anexo.setVisible(True)
+            Ui_MainWindow.controle_vizualizar_campos(False, *self.campos_para_esconder_tela_criar_editar)
+            self.popular_campos_editar_tarefa()
+        except AttributeError as e:
+            raise e
+
+    def operacoes_tarefa(self, button):
+        self.controle_habilitar_campos(True, *self.campos_para_habilitar_tela_criar_editar)
+        self.btn_anexo.setVisible(True)
+        self.tableWidget.clearSelection()
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle(f"{button.text()} Tarefa")
+
+        try:
+            match button.text():
+                case "Criar":
+                    self.configuracoes_criar_tarefa()
+                case "Editar":
+                    self.configuracoes_editar_tarefa()
+
+            self.stackedWidget.setCurrentWidget(self.page_criacao)
+        except AttributeError:
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setText("Escolha uma tarefa abaixo!!!")
+            msg_box.exec()
+        except BaseException as e:
+            print(e)
+
+    def preencher_tela_conta(self):
+        nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
+        self.txt_nome.setText(nome_completo)
+        self.txt_usuario.setText(self.usuario_atual["nome_login"])
+        Ui_MainWindow.controle_habilitar_campos(False, self.txt_nome, self.txt_usuario)
+
+    def popular_tabela_tarefas_professor_atual(self):
+        try:
+            tarefa_router = TarefaRouter()
+            response = tarefa_router.get_tarefas_usuario_atual()
+
+            if response.status_code != 200:
+                return
+
+            self.tableWidget.setRowCount(0)
+            self.tarefas_professor_atual = response.json()
+            self.tableWidget.setRowCount(len(self.tarefas_professor_atual))
+
+            for linha, tarefa in enumerate(self.tarefas_professor_atual):
+                tarefa_tuple = (tarefa["id"], tarefa["titulo"], tarefa["descricao"], tarefa["status"],
+                                tarefa["prioridade"],
+                                tarefa["anexo"].split("/")[-1] if tarefa["anexo"] else "Sem Anexo")
+
+                for coluna, valor in enumerate(tarefa_tuple):
+                    item = QTableWidgetItem(str(valor))
+                    self.tableWidget.setItem(linha, coluna, item)
+        except BaseException as e:
+            print(e)
+
+    def configuracao_btn_tarefas(self):
+        self.limpar_campos()
+        self.stackedWidget.setCurrentWidget(self.page_tarefas)
+
+    def configuracao_tela_vizualizacao_tarefas(self):
+        self.controle_vizualizar_campos(False, *self.campos_para_esconder_tela_vizualizar_tarefa)
+        self.controle_habilitar_campos(False, *self.campos_para_desabilitar_tela_vizualizar_tarefa)
+        self.popular_campos_editar_tarefa()
+        self.btn_download_anexo_professor.setVisible(self.has_anexo())
+        self.frame_right.setVisible(True)
+        self.stackedWidget.setCurrentWidget(self.page_criacao)
+
+    def configuracao_usuario_professor(self):
+        self.popular_tabela_tarefas_professor_atual()
+
+    def configurar_tela_usuario(self):
+        self.preencher_tela_conta()
+
+        match self.usuario_atual["funcao_id"]:
+            case 2:
+                self.configuracao_usuario_professor()
 
     def deslogar(self):
         os.environ["TOKEN_USUARIO"] = ""
@@ -824,226 +1136,3 @@ class Ui_MainWindow(object):
 
         self.window.show()
         self.main_window.hide()
-
-    def goto_tela_conta(self):
-        self.stackedWidget.setCurrentWidget(self.page_conta)
-
-    def limpar_campos_tarefas(self):
-        self.txt_titulo_tarefa.setText("")
-        self.txt_descricao_tarefa.setPlainText("")
-        self.txt_anexo.setText("")
-        self.comboBox_status_tarefa.setCurrentIndex(0)
-        self.comboBox_prioridade.setCurrentIndex(0)
-
-    def get_tarefa_by_id(self):
-        id_tarefa_selecionada = int(self.tableWidget.item(self.tableWidget.currentRow(), 0).text())
-        return list(filter(lambda x: x["id"] == id_tarefa_selecionada, self.tarefas_professor_atual))[0]
-
-    def configurar_campos_editar_tarefa(self, tarefa):
-        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
-                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">EDI\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
-                                                            None))
-        self.txt_titulo_tarefa.setText(tarefa["titulo"])
-        self.txt_descricao_tarefa.setPlainText(tarefa["descricao"])
-        self.comboBox_status_tarefa.setCurrentIndex(0 if tarefa["status"] == "ativo" else 1)
-        self.comboBox_prioridade.setCurrentIndex((0 if tarefa["prioridade"] == "alta"
-                                                  else (1 if tarefa["prioridade"] == "media" else 2)))
-        self.txt_anexo.setText(tarefa["anexo"].split("/")[-1] if tarefa["anexo"] else "")
-        self.btn_publicar_tarefa.setText("Atualizar")
-
-    def editar_tarefa(self):
-        msg_box = QMessageBox()
-        msg_box.setWindowTitle("Editar Tarefa")
-        self.btn_anexo.setEnabled(True)
-
-        try:
-            tarefa_selecionada = self.get_tarefa_by_id()
-            self.goto_tela_criar_tarefa()
-            self.configurar_campos_editar_tarefa(tarefa_selecionada)
-        except AttributeError:
-            msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setText("Escolha uma tarefa abaixo!!!")
-            msg_box.exec()
-
-    def deletar_tarefa(self):
-        msg_box = QMessageBox()
-        msg_box.setWindowTitle("Deletar Tarefa")
-        try:
-            tarefa = self.get_tarefa_by_id()
-            msg_box.setIcon(QMessageBox.Warning)
-            msg_box.setText(f"Deseja exluir a tarefa {tarefa['titulo']} com o id {tarefa['id']}?")
-            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-            resultado = msg_box.exec()
-
-            if resultado == QMessageBox.StandardButton.Yes:
-                tarefa_router = TarefaRouter()
-                response = tarefa_router.delete_tarefa(tarefa["id"])
-
-                if response.status_code == 204:
-                    msg_box.setIcon(QMessageBox.Information)
-                    msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-                    msg_box.setText(f"Tarefa com o id {tarefa['id']} removida")
-                    msg_box.exec()
-                    self.popular_tabela_tarefas_do_professor_atual()
-        except AttributeError:
-            msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setText("Escolha uma tarefa abaixo!!!")
-            msg_box.exec()
-        except BaseException as e:
-            print(e)
-
-    def goto_tela_tarefas(self):
-        self.limpar_campos_tarefas()
-        self.stackedWidget.setCurrentWidget(self.page_tarefas)
-
-    def controle_habilitar_campos(self, *campos, enable=True):
-        for campo in campos:
-            campo.setEnabled(enable)
-
-    def controle_visualizar_campos(self, *campos, visible=True):
-        for campo in campos:
-            campo.setVisible(visible)
-
-    def configuracao_tela_criar_tarefa_professor(self):
-        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
-                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CRIA\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
-                                                            None))
-        campos = (self.txt_titulo_tarefa, self.txt_descricao_tarefa, self.comboBox_status_tarefa,
-                  self.comboBox_prioridade, self.btn_anexo)
-        campos_para_esconder = (self.lbl_anexo_aluno, self.btn_anexo_aluno, self.txt_anexo_aluno,
-                                self.btn_download_anexo_aluno, self.btn_download_anexo_professor, self.frame_right)
-
-        self.controle_habilitar_campos(*campos)
-        self.controle_visualizar_campos(*campos_para_esconder, visible=False)
-
-        self.btn_publicar_tarefa.setVisible(True)
-        self.btn_publicar_tarefa.setText("Publicar")
-
-    def procurar_arquivo(self):
-        pwd = QFileDialog.getOpenFileName(self.page_criacao, "Selecione um arquivo")
-        file = pwd[0]
-        self.caminho_anexo_professor = file
-        self.txt_anexo.setText(file.split("/")[-1])
-
-    def get_campos_tarefa(self):
-        campos = {
-            "titulo": self.txt_titulo_tarefa.text().strip(),
-            "descricao": self.txt_descricao_tarefa.toPlainText().strip(),
-            "status": self.comboBox_status_tarefa.currentText(),
-            "prioridade": self.comboBox_prioridade.currentText(),
-        }
-
-        return campos
-
-    def is_campos_criar_tarefa_preenchidos(self):
-        campos = self.get_campos_tarefa()
-
-        boolean = (len(campos["titulo"]) != 0
-                   and len(campos["descricao"]) != 0)
-
-        return boolean
-
-    def criar_tarefa(self):
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Information)
-
-        if self.is_campos_criar_tarefa_preenchidos():
-            campos = self.get_campos_tarefa()
-            tarefa_router = TarefaRouter()
-            has_anexo = len(self.txt_anexo.text()) != 0 and os.path.exists(self.caminho_anexo_professor)
-
-            try:
-                response = None
-
-                if self.btn_publicar_tarefa.text() == "Atualizar":
-                    tarefa_selecionada = self.get_tarefa_by_id()
-                    response = tarefa_router.update_tarefa(tarefa_selecionada["id"], data=campos,
-                                                           file=self.caminho_anexo_professor, has_anexo=has_anexo)
-                elif self.btn_publicar_tarefa.text() == "Publicar":
-                    response = tarefa_router.create_tarefa(data=campos, file=self.caminho_anexo_professor,
-                                                           has_anexo=has_anexo)
-
-                if response.status_code in (200, 201):
-                    msg_box.setText("Operação concluida com sucesso!")
-                    msg_box.exec()
-                    self.tableWidget.clearSelection()
-                    self.popular_tabela_tarefas_do_professor_atual()
-                    self.goto_tela_tarefas()
-                else:
-                    msg_box.setIcon(QMessageBox.Critical)
-                    msg_box.setText("Um erro ocorreu ao realizar essa operação")
-                    msg_box.exec()
-            except BaseException as e:
-                print(e)
-                traceback.print_exc()
-                msg_box.setIcon(QMessageBox.Critical)
-                msg_box.setText("Um erro ocorreu no sistema!!!")
-                msg_box.exec()
-        else:
-            msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setText("Preencha os campos!!!")
-            msg_box.exec()
-
-    def goto_tela_criar_tarefa(self):
-        self.stackedWidget.setCurrentWidget(self.page_criacao)
-        self.configuracao_tela_criar_tarefa_professor()
-
-    def preencher_tela_conta(self):
-        nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
-        self.txt_nome.setText(nome_completo)
-        self.txt_nome.setEnabled(False)
-        self.txt_usuario.setText(self.usuario_atual["nome_login"])
-        self.txt_usuario.setEnabled(False)
-
-    def configuracao_usuario_aluno(self):
-        pass
-
-    def popular_tabela_tarefas_do_professor_atual(self):
-        try:
-            tarefa_router = TarefaRouter()
-            response = tarefa_router.get_tarefas_usuario_atual()
-
-            if response.status_code == 200:
-                self.tableWidget.setRowCount(0)
-                self.tarefas_professor_atual = response.json()
-                self.tableWidget.setRowCount(len(self.tarefas_professor_atual))
-
-                for linha, tarefa in enumerate(self.tarefas_professor_atual):
-                    tarefa_list = [tarefa["id"], tarefa["titulo"], tarefa["descricao"],
-                                   tarefa["status"], tarefa["prioridade"],
-                                   tarefa["anexo"].split("/")[-1] if tarefa["anexo"] else "Sem Anexo"]
-
-                    for coluna, valor in enumerate(tarefa_list):
-                        item = QTableWidgetItem(str(valor))
-                        self.tableWidget.setItem(linha, coluna, item)
-        except BaseException as e:
-            print(e)
-
-    def configuracao_usuario_professor(self):
-        self.popular_tabela_tarefas_do_professor_atual()
-
-    def configurar_tela_usuario(self):
-        self.preencher_tela_conta()
-
-        match self.usuario_atual["funcao_id"]:
-            case 1:
-                self.configuracao_usuario_aluno()
-            case 2:
-                self.configuracao_usuario_professor()
-
-    def configuracao_tela_view_tarefa(self):
-        campos_para_desabilitar = (self.txt_titulo_tarefa, self.txt_descricao_tarefa, self.comboBox_status_tarefa,
-                                   self.comboBox_prioridade)
-        campos_para_esconder = (self.btn_anexo, self.lbl_anexo_aluno, self.btn_anexo_aluno,
-                                self.txt_anexo_aluno, self.btn_download_anexo_aluno, self.btn_publicar_tarefa)
-        campos_para_mostrar = (self.btn_download_anexo_professor, self.frame_right)
-
-        self.controle_habilitar_campos(*campos_para_desabilitar, enable=False)
-        self.controle_visualizar_campos(*campos_para_esconder, visible=False)
-        self.controle_visualizar_campos(*campos_para_mostrar, visible=True)
-
-        self.configurar_campos_editar_tarefa(self.get_tarefa_by_id())
-
-    def goto_tela_view_tarefa(self):
-        self.configuracao_tela_view_tarefa()
-        self.stackedWidget.setCurrentWidget(self.page_criacao)
