@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 
 ################################################################################
 ## Form generated from reading UI file 'tela_inicial.ui'
@@ -8,7 +7,7 @@ import os
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
-
+import os
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
                             QMetaObject, QObject, QPoint, QRect,
                             QSize, QTime, QUrl, Qt)
@@ -16,14 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QCommandLinkButton, QFrame,
-                               QHBoxLayout, QHeaderView, QLabel, QLineEdit,
-                               QMainWindow, QPlainTextEdit, QPushButton, QSizePolicy,
-                               QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
-                               QTextEdit, QToolButton, QVBoxLayout, QWidget, QMessageBox,
-                               QAbstractItemView, QFileDialog)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QCommandLinkButton,
+                               QFrame, QHBoxLayout, QHeaderView, QLabel,
+                               QLineEdit, QListWidget, QListWidgetItem, QMainWindow,
+                               QPlainTextEdit, QPushButton, QSizePolicy, QSpacerItem,
+                               QStackedWidget, QTableWidget, QTableWidgetItem, QToolButton,
+                               QVBoxLayout, QWidget, QMessageBox, QFileDialog, QAbstractItemView,
+                               QInputDialog)
 from ..Routers.usuario_router import UsuarioRouter
 from ..Routers.tarefa_router import TarefaRouter
+from ..Routers.comentario_router import ComentarioRouter
 from . import tela_login
 
 
@@ -303,9 +304,9 @@ class Ui_MainWindow(object):
         if (self.tableWidget.columnCount() < 6):
             self.tableWidget.setColumnCount(6)
         __qtablewidgetitem = QTableWidgetItem()
-        __qtablewidgetitem.setTextAlignment(Qt.AlignCenter);
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
+        __qtablewidgetitem1.setTextAlignment(Qt.AlignCenter);
         self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
@@ -425,7 +426,9 @@ class Ui_MainWindow(object):
         self.frame_mid_2.setFrameShape(QFrame.StyledPanel)
         self.frame_mid_2.setFrameShadow(QFrame.Raised)
         self.verticalLayout_13 = QVBoxLayout(self.frame_mid_2)
+        self.verticalLayout_13.setSpacing(0)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.verticalLayout_13.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setSpacing(0)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
@@ -616,7 +619,7 @@ class Ui_MainWindow(object):
 
         self.frame_right = QFrame(self.frame_mid)
         self.frame_right.setObjectName(u"frame_right")
-        self.frame_right.setMinimumSize(QSize(250, 0))
+        self.frame_right.setMinimumSize(QSize(300, 0))
         self.frame_right.setMaximumSize(QSize(80, 16777215))
         self.frame_right.setFrameShape(QFrame.StyledPanel)
         self.frame_right.setFrameShadow(QFrame.Raised)
@@ -627,14 +630,17 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_16.addWidget(self.lbl_comentarios)
 
-        self.txt_comentarios_publicados = QTextEdit(self.frame_right)
-        self.txt_comentarios_publicados.setObjectName(u"txt_comentarios_publicados")
-        self.txt_comentarios_publicados.setEnabled(False)
-        self.txt_comentarios_publicados.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-                                                      "background-color: rgb(35, 35, 35);\n"
-                                                      "border:1px solid black;")
+        self.listWidget = QListWidget(self.frame_right)
+        self.listWidget.setObjectName(u"listWidget")
+        self.listWidget.setEnabled(True)
+        self.listWidget.setStyleSheet(u"color: rgb(255, 255, 255);\n"
+                                      "background-color: rgb(35, 35, 35);\n"
+                                      "border:1px solid black;")
+        self.listWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.listWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.listWidget.setAutoScroll(True)
 
-        self.verticalLayout_16.addWidget(self.txt_comentarios_publicados)
+        self.verticalLayout_16.addWidget(self.listWidget)
 
         self.horizontalLayout_12 = QHBoxLayout()
         self.horizontalLayout_12.setSpacing(0)
@@ -657,20 +663,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.addWidget(self.btn_contario)
 
         self.verticalLayout_16.addLayout(self.horizontalLayout_12)
-
-        self.pushButton = QPushButton(self.frame_right)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setStyleSheet(u"QPushButton {\n"
-                                      "	color: rgb(255, 255, 255);\n"
-                                      "	background-color: rgb(35, 35, 35);\n"
-                                      "	border:1px solid black;\n"
-                                      "}\n"
-                                      "\n"
-                                      "QPushButton:hover {\n"
-                                      "	background-color: rgb(27, 68, 120);\n"
-                                      "}")
-
-        self.verticalLayout_16.addWidget(self.pushButton)
 
         self.horizontalLayout_5.addWidget(self.frame_right)
 
@@ -718,8 +710,6 @@ class Ui_MainWindow(object):
 
         QMetaObject.connectSlotsByName(MainWindow)
 
-        # me
-
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -745,6 +735,7 @@ class Ui_MainWindow(object):
 
         self.tarefas_professor_atual = None
         self.caminho_anexo = ""
+        self.comentarios_tarefa_atual = None
 
         self.btn_page_tarefas.clicked.connect(self.configuracao_btn_tarefas)
         self.btn_page_conta.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.page_conta))
@@ -760,8 +751,12 @@ class Ui_MainWindow(object):
         self.btn_download_anexo_professor.clicked.connect(lambda: self.download_arquivo())
         self.btn_download_anexo_aluno.clicked.connect(lambda: self.download_arquivo(False))
 
+        self.btn_contario.clicked.connect(self.enviar_comentario)
+        #self.pushButton.clicked.connect(self.)
+
         self.configurar_tela_usuario()
         self.stackedWidget.setCurrentWidget(self.page_tarefas)
+        self.listWidget.itemDoubleClicked.connect(self.operacoes_comentario)
 
     # setupUi
 
@@ -782,16 +777,16 @@ class Ui_MainWindow(object):
         self.btn_deletar.setText(QCoreApplication.translate("MainWindow", u"Excluir", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"ID", None));
-        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(1)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"T\u00edtulo", None));
-        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(2)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Descri\u00e7\u00e3o", None));
-        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(3)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Status", None));
-        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(4)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Prioridade", None));
-        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(5)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"T\u00edtulo", None));
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Descri\u00e7\u00e3o", None));
+        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Prioridade", None));
+        ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
         self.lbl_conta.setText(QCoreApplication.translate("MainWindow",
                                                           u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CONTA</span></p></body></html>",
                                                           None))
@@ -837,9 +832,7 @@ class Ui_MainWindow(object):
                                                                 u"<html><head/><body><p align=\"center\"><span style=\" color:#ffffff;\">Comentarios</span></p></body></html>",
                                                                 None))
         self.btn_contario.setText(QCoreApplication.translate("MainWindow", u">", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Mais Detalhes", None))
         self.btn_publicar_tarefa.setText(QCoreApplication.translate("MainWindow", u"Publicar", None))
-
     # retranslateUi
 
     @staticmethod
@@ -874,6 +867,9 @@ class Ui_MainWindow(object):
                                                        self.txt_anexo.text() if is_anexo_professor
                                                        else self.txt_anexo_aluno.text())
 
+            if file_name == "":
+                return
+
             if response.status_code != 200:
                 return
 
@@ -893,6 +889,39 @@ class Ui_MainWindow(object):
             msg_box.setText("Um erro ocorreu no sistema ao realizar essa operação")
             msg_box.exec()
 
+    def preencher_campos_comentario(self):
+        self.listWidget.clear()
+        comentarios = sorted(self.get_comentarios_by_tarefa(), key=lambda x: x["id"])
+        for comentario in comentarios:
+            item_text = f"({comentario['funcao']})<{comentario['nome_login']}> {comentario['texto']}"
+            list_item = QListWidgetItem(item_text)
+            list_item.setData(Qt.UserRole, comentario["usuario_id"])
+            self.listWidget.addItem(list_item)
+
+            if self.usuario_atual["id"] == list_item.data(Qt.UserRole):
+                list_item.setFlags(list_item.flags())
+
+    def enviar_comentario(self):
+        try:
+            print("entrei")
+            id_tarefa_selecionada = self.get_tarefa_by_id()["id"]
+            campos = {"texto": self.txt_comentario.text().strip(), "tarefa_id": id_tarefa_selecionada}
+            comentario_router = ComentarioRouter()
+            response = comentario_router.create_comentario(campos)
+            print(response.json())
+            print(response.status_code)
+
+            if campos["texto"] == "":
+                return
+
+            if response.status_code != 201:
+                return
+
+            self.configuracao_tela_vizualizacao_tarefas()
+            self.txt_comentario.clear()
+        except BaseException as e:
+            print(e)
+
     @staticmethod
     def get_usuario_atual():
         try:
@@ -906,6 +935,20 @@ class Ui_MainWindow(object):
 
         return list(filter(lambda tarefa: tarefa["id"] == id_tarefa_selecionada, self.tarefas_professor_atual))[0]
 
+    def get_comentarios_by_tarefa(self):
+        try:
+            comentario_router = ComentarioRouter()
+            id_tarefa_selecionada = self.get_tarefa_by_id()["id"]
+
+            response = comentario_router.get_comentarios_by_id_tarefa(id_tarefa_selecionada)
+
+            if response.status_code != 200:
+                return
+
+            return response.json()
+        except BaseException as e:
+            print(e)
+
     def get_campos_criar_tarefa(self):
         return {
             "titulo": self.txt_titulo_tarefa.text().strip(),
@@ -917,13 +960,13 @@ class Ui_MainWindow(object):
     def get_campos_editar_tarefa(self):
         try:
             tarefa_selecionada = self.get_tarefa_by_id()
-            index_combo_box_prioridade = (0 if tarefa_selecionada["prioridade"] == "alta"
-                                          else (1 if tarefa_selecionada["prioridade"] == "media" else 2))
+            status_map = {"ativo": 0, "inativo": 1}
+            prioridade_map = {"alta": 0, "media": 1, "baixa": 2}
             return {
                 self.txt_titulo_tarefa: tarefa_selecionada["titulo"],
                 self.txt_descricao_tarefa: tarefa_selecionada["descricao"],
-                self.comboBox_status_tarefa: 0 if tarefa_selecionada["status"] == "ativo" else 1,
-                self.comboBox_prioridade: index_combo_box_prioridade,
+                self.comboBox_status_tarefa: status_map.get(tarefa_selecionada["status"]),
+                self.comboBox_prioridade: prioridade_map.get(tarefa_selecionada["prioridade"]),
                 self.txt_anexo: tarefa_selecionada["anexo"].split("/")[-1] if tarefa_selecionada["anexo"] else ""
             }
         except AttributeError as e:
@@ -1075,6 +1118,15 @@ class Ui_MainWindow(object):
         except BaseException as e:
             print(e)
 
+    def operacoes_comentario(self, item):
+        message_id = item.data(Qt.UserRole)
+        edited_text = item.text()
+
+        if item.flags():
+            dialog = QInputDialog()
+            dialog.setTextValue(edited_text.split(" ")[-1])
+            dialog.exec()
+
     def preencher_tela_conta(self):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
         self.txt_nome.setText(nome_completo)
@@ -1109,12 +1161,17 @@ class Ui_MainWindow(object):
         self.stackedWidget.setCurrentWidget(self.page_tarefas)
 
     def configuracao_tela_vizualizacao_tarefas(self):
+        self.lbl_criacao.setText(QCoreApplication.translate("MainWindow",
+                                                            u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">VIZUALIZA\u00c7\u00c3O DE TAREFAS</span></p></body></html>",
+                                                            None))
         self.controle_vizualizar_campos(False, *self.campos_para_esconder_tela_vizualizar_tarefa)
         self.controle_habilitar_campos(False, *self.campos_para_desabilitar_tela_vizualizar_tarefa)
         self.popular_campos_editar_tarefa()
         self.btn_download_anexo_professor.setVisible(self.has_anexo())
         self.frame_right.setVisible(True)
         self.stackedWidget.setCurrentWidget(self.page_criacao)
+        self.preencher_campos_comentario()
+        self.listWidget.scrollToBottom()
 
     def configuracao_usuario_professor(self):
         self.popular_tabela_tarefas_professor_atual()
