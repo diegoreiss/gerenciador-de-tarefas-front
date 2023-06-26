@@ -908,8 +908,6 @@ class Ui_MainWindow(object):
             campos = {"texto": self.txt_comentario.text().strip(), "tarefa_id": id_tarefa_selecionada}
             comentario_router = ComentarioRouter()
             response = comentario_router.create_comentario(campos)
-            print(response.json())
-            print(response.status_code)
 
             if campos["texto"] == "":
                 return
