@@ -219,14 +219,12 @@ class Ui_form_login(object):
                     msg_box.exec()
 
                     self.goto_tela_principal()
-
-                elif response.status_code == 403:
+                elif response.status_code in (403, 503):
                     msg_response = response.json()["detail"]
                     msg_box.setIcon(QMessageBox.Critical)
                     msg_box.setText(msg_response)
                     msg_box.exec()
             except BaseException as e:
-                print(e)
                 msg_box.setIcon(QMessageBox.Critical)
                 msg_box.setText("Um erro ocorreu ao tentar se conectar no sistema. Tente novamente!")
                 msg_box.exec()

@@ -318,7 +318,7 @@ class Ui_form_cadastro(object):
             if response.status_code == 201:
                 msg_box.setText("Cadastro realizado com sucesso!")
                 self.goto_tela_login()
-            elif response.status_code == 400:
+            elif response.status_code in (400, 503):
                 mensagem_erro = response.json()["detail"]
                 msg_box.setIcon(QMessageBox.Critical)
                 msg_box.setText(mensagem_erro)
