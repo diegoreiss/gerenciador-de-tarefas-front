@@ -10,7 +10,7 @@
 import os
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
                             QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+                            QSize, QTime, QUrl, Qt, QDir)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
@@ -1122,8 +1122,13 @@ class Ui_MainWindow(object):
 
         if item.flags():
             dialog = QInputDialog()
+            dialog.setOkButtonText("Alterar")
+            dialog.setCancelButtonText("Remover")
             dialog.setTextValue(edited_text.split(" ")[-1])
             dialog.exec()
+            texto = dialog.textValue()
+            print(texto)
+
 
     def preencher_tela_conta(self):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
