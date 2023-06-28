@@ -301,12 +301,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addLayout(self.horizontalLayout_4)
 
         self.tableWidget = QTableWidget(self.page_tarefas)
-        if (self.tableWidget.columnCount() < 6):
-            self.tableWidget.setColumnCount(6)
+        if (self.tableWidget.columnCount() < 7):
+            self.tableWidget.setColumnCount(7)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        __qtablewidgetitem1.setTextAlignment(Qt.AlignCenter);
+        __qtablewidgetitem1.setTextAlignment(Qt.AlignCenter)
         self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
@@ -316,6 +316,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
         __qtablewidgetitem5 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem6)
         self.tableWidget.setObjectName(u"tableWidget")
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
@@ -730,9 +732,11 @@ class Ui_MainWindow(object):
                                                             self.btn_publicar_tarefa)
         self.campos_para_desabilitar_tela_vizualizar_tarefa = (self.txt_titulo_tarefa, self.comboBox_status_tarefa,
                                                                self.comboBox_prioridade, self.txt_descricao_tarefa)
+        self.campos_para_esconder_tela_aluno = (self.btn_criar, self.btn_editar, self.btn_deletar)
 
         self.usuario_atual = Ui_MainWindow.get_usuario_atual()
 
+        self.todas_tarefas = None
         self.tarefas_professor_atual = None
         self.caminho_anexo = ""
         self.comentarios_tarefa_atual = None
@@ -787,6 +791,8 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Prioridade", None));
         ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Anexo", None));
+        ___qtablewidgetitem6 = self.tableWidget.horizontalHeaderItem(6)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Autor", None));
         self.lbl_conta.setText(QCoreApplication.translate("MainWindow",
                                                           u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">CONTA</span></p></body></html>",
                                                           None))
@@ -895,7 +901,7 @@ class Ui_MainWindow(object):
         for comentario in comentarios:
             item_text = f"({comentario['funcao']})<{comentario['nome_login']}> {comentario['texto']}"
             list_item = QListWidgetItem(item_text)
-            list_item.setData(Qt.UserRole, comentario["usuario_id"])
+            list_item.setData(Qt.UserRole, {"comentario_id": comentario["id"],  "usuario_id": comentario["usuario_id"]})
             self.listWidget.addItem(list_item)
 
             if self.usuario_atual["id"] == list_item.data(Qt.UserRole):
@@ -931,7 +937,11 @@ class Ui_MainWindow(object):
     def get_tarefa_by_id(self):
         id_tarefa_selecionada = int(self.tableWidget.item(self.tableWidget.currentRow(), 0).text())
 
-        return list(filter(lambda tarefa: tarefa["id"] == id_tarefa_selecionada, self.tarefas_professor_atual))[0]
+        match self.usuario_atual["funcao_id"]:
+            case 1:
+                return list(filter(lambda tarefa: tarefa["tarefa"]["id"] == id_tarefa_selecionada, self.todas_tarefas))[0]["tarefa"]
+            case 2:
+                return list(filter(lambda tarefa: tarefa["id"] == id_tarefa_selecionada, self.tarefas_professor_atual))[0]
 
     def get_comentarios_by_tarefa(self):
         try:
@@ -958,6 +968,7 @@ class Ui_MainWindow(object):
     def get_campos_editar_tarefa(self):
         try:
             tarefa_selecionada = self.get_tarefa_by_id()
+            print(tarefa_selecionada)
             status_map = {"ativo": 0, "inativo": 1}
             prioridade_map = {"alta": 0, "media": 1, "baixa": 2}
             return {
@@ -1116,19 +1127,68 @@ class Ui_MainWindow(object):
         except BaseException as e:
             print(e)
 
+    def deletar_comentario(self, dados_comentario):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Deletar Tarefa")
+        try:
+            comentario_router = ComentarioRouter()
+            response = comentario_router.delete_comentario(dados_comentario["comentario_id"])
+
+            if response.status_code not in (204, ):
+                msg_box.setText(response.json()["detail"])
+                msg_box.exec()
+
+            msg_box.setText("Comentario deletado com sucesso!")
+            msg_box.exec()
+        except BaseException as e:
+            print(e)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setText("Um erro ocorreu ao realizar essa operação, tente novamente!")
+            msg_box.exec()
+
+    def editar_comentario(self, dados_comentario, comentario_atual):
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Atualizar Tarefa")
+        msg_box.setIcon(QMessageBox.Information)
+
+        item, ok = QInputDialog.getText(QWidget(), "Editar Tarefa", "Seu comentário", QLineEdit.Normal,
+                                        comentario_atual)
+
+        if ok:
+            body = {"texto": item}
+            comentario_router = ComentarioRouter()
+            try:
+                response = comentario_router.update_comentario(dados_comentario["comentario_id"], request_body=body)
+
+                if response.status_code == 200:
+                    msg_box.setText("Comentario Atualizado com sucesso!")
+                    msg_box.exec()
+                else:
+                    msg_box.setText(response.json()["detail"])
+            except BaseException as e:
+                print(e)
+                msg_box.setIcon(QMessageBox.Critical)
+                msg_box.setText("Um erro ocorreu ao tentar realizar essa operação!")
+                msg_box.exec()
+
     def operacoes_comentario(self, item):
-        message_id = item.data(Qt.UserRole)
-        edited_text = item.text()
+        opcoes = ["Editar", "Deletar"]
 
-        if item.flags():
-            dialog = QInputDialog()
-            dialog.setOkButtonText("Alterar")
-            dialog.setCancelButtonText("Remover")
-            dialog.setTextValue(edited_text.split(" ")[-1])
-            dialog.exec()
-            texto = dialog.textValue()
-            print(texto)
+        item_data = item.data(Qt.UserRole)
+        comentario = item.text().split("> ")[-1]
 
+        if item_data["usuario_id"] == self.usuario_atual["id"]:
+            item, ok = QInputDialog.getItem(QWidget(), "Opção", f"Comentario:{comentario}\nO que deseja fazer com esse comentario?",
+                                            opcoes, 0, False)
+
+            if ok:
+                if item == "Deletar":
+                    self.deletar_comentario(item_data)
+                elif item == "Editar":
+                    self.editar_comentario(item_data, comentario)
+
+                self.preencher_campos_comentario()
 
     def preencher_tela_conta(self):
         nome_completo = f"{self.usuario_atual['nome']} {self.usuario_atual['sobrenome']}"
@@ -1146,12 +1206,38 @@ class Ui_MainWindow(object):
 
             self.tableWidget.setRowCount(0)
             self.tarefas_professor_atual = response.json()
+            self.tableWidget.setColumnCount(6)
             self.tableWidget.setRowCount(len(self.tarefas_professor_atual))
 
             for linha, tarefa in enumerate(self.tarefas_professor_atual):
                 tarefa_tuple = (tarefa["id"], tarefa["titulo"], tarefa["descricao"], tarefa["status"],
                                 tarefa["prioridade"],
                                 tarefa["anexo"].split("/")[-1] if tarefa["anexo"] else "Sem Anexo")
+
+                for coluna, valor in enumerate(tarefa_tuple):
+                    item = QTableWidgetItem(str(valor))
+                    self.tableWidget.setItem(linha, coluna, item)
+        except BaseException as e:
+            print(e)
+
+    def popular_tabela_tarefas_aluno(self):
+        try:
+            tarefa_router = TarefaRouter()
+            response = tarefa_router.get_all_tarefas()
+
+            if response.status_code != 200:
+                return
+
+            self.tableWidget.setRowCount(0)
+            self.todas_tarefas = response.json()
+            self.tableWidget.setRowCount(len(self.todas_tarefas))
+
+            for linha, tarefa in enumerate(self.todas_tarefas):
+                tarefa_tuple = (tarefa["tarefa"]["id"],tarefa["tarefa"]["titulo"],
+                                tarefa["tarefa"]["descricao"], tarefa["tarefa"]["status"],
+                                tarefa["tarefa"]["prioridade"],
+                                tarefa["tarefa"]["anexo"].split("/")[-1] if tarefa["tarefa"]["anexo"] else "Sem Anexo",
+                                tarefa["nome_completo_autor"])
 
                 for coluna, valor in enumerate(tarefa_tuple):
                     item = QTableWidgetItem(str(valor))
@@ -1179,10 +1265,16 @@ class Ui_MainWindow(object):
     def configuracao_usuario_professor(self):
         self.popular_tabela_tarefas_professor_atual()
 
+    def configuracao_usuario_aluno(self):
+        self.controle_vizualizar_campos(False, *self.campos_para_esconder_tela_aluno)
+        self.popular_tabela_tarefas_aluno()
+
     def configurar_tela_usuario(self):
         self.preencher_tela_conta()
 
         match self.usuario_atual["funcao_id"]:
+            case 1:
+                self.configuracao_usuario_aluno()
             case 2:
                 self.configuracao_usuario_professor()
 
