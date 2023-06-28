@@ -920,14 +920,16 @@ class Ui_MainWindow(object):
 
     def enviar_comentario(self):
         try:
-            print("entrei")
             id_tarefa_selecionada = self.get_tarefa_by_id()["id"]
             campos = {"texto": self.txt_comentario.text().strip(), "tarefa_id": id_tarefa_selecionada}
-            comentario_router = ComentarioRouter()
-            response = comentario_router.create_comentario(campos)
 
             if campos["texto"] == "":
+                self.preencher_campos_comentario()
+                self.txt_comentario.clear()
                 return
+
+            comentario_router = ComentarioRouter()
+            response = comentario_router.create_comentario(campos)
 
             if response.status_code != 201:
                 return
