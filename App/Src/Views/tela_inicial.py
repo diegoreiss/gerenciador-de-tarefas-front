@@ -154,6 +154,7 @@ class Ui_MainWindow(object):
                                           "	background-color: rgb(27, 68, 120);\n"
                                           "}")
 
+
         self.verticalLayout_4.addWidget(self.btn_page_conta)
 
         self.verticalSpacer = QSpacerItem(20, 4000, QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -234,6 +235,11 @@ class Ui_MainWindow(object):
         self.btn_criar.setIconSize(QSize(16, 16))
         self.btn_criar.setAutoDefault(False)
 
+        btn_criar_pixmap = QPixmap("ui/icons/add task.png")
+        self.btn_criar.setIcon(btn_criar_pixmap)
+        self.btn_criar.setIconSize(QSize(45, 45))
+        self.btn_criar.setAutoDefault(False)
+
         self.horizontalLayout_4.addWidget(self.btn_criar)
 
         self.btn_editar = QPushButton(self.page_tarefas)
@@ -260,7 +266,9 @@ class Ui_MainWindow(object):
                                       "\n"
                                       "\n"
                                       "")
-        self.btn_editar.setIconSize(QSize(16, 16))
+        btn_editar_pixmap = QPixmap("ui/icons/edit task.png")
+        self.btn_editar.setIcon(btn_editar_pixmap)
+        self.btn_editar.setIconSize(QSize(45, 45))
         self.btn_editar.setAutoDefault(False)
 
         self.horizontalLayout_4.addWidget(self.btn_editar)
@@ -289,7 +297,9 @@ class Ui_MainWindow(object):
                                        "\n"
                                        "\n"
                                        "")
-        self.btn_deletar.setIconSize(QSize(16, 16))
+        btn_deletar_pixmap = QPixmap('ui/icons/remove task.png')
+        self.btn_deletar.setIcon(btn_deletar_pixmap)
+        self.btn_deletar.setIconSize(QSize(45, 45))
         self.btn_deletar.setAutoDefault(False)
 
         self.horizontalLayout_4.addWidget(self.btn_deletar)
@@ -544,10 +554,9 @@ class Ui_MainWindow(object):
         self.btn_anexo.setEnabled(True)
         self.btn_anexo.setMaximumSize(QSize(16777215, 60))
         self.btn_anexo.setStyleSheet(u"color: rgb(255, 255, 255);")
-        icon = QIcon()
-        icon.addFile(u":/clip/transferir.jfif", QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_anexo.setIcon(icon)
-        self.btn_anexo.setIconSize(QSize(25, 30))
+        btn_anexo_pixmap = QPixmap("ui/icons/anexo.png")
+        self.btn_anexo.setIcon(btn_anexo_pixmap)
+        self.btn_anexo.setIconSize(QSize(20, 30))
 
         self.horizontalLayout_7.addWidget(self.btn_anexo)
 
@@ -564,10 +573,10 @@ class Ui_MainWindow(object):
 
         self.btn_download_anexo_professor = QToolButton(self.frame_mid_2)
         self.btn_download_anexo_professor.setObjectName(u"btn_download_anexo_professor")
-        self.btn_download_anexo_professor.setStyleSheet(u"background-color: rgb(255, 255, 255);")
-        icon1 = QIcon()
-        icon1.addFile(u":/download/download_icon.jfif", QSize(), QIcon.Normal, QIcon.On)
-        self.btn_download_anexo_professor.setIcon(icon1)
+        self.btn_download_anexo_professor.setStyleSheet(u"background-color: rgb(0, 0, 0);")
+        btn_download_pixmap = QPixmap("ui/icons/download.png")
+        self.btn_download_anexo_professor.setIcon(btn_download_pixmap)
+        self.btn_download_anexo_professor.setIconSize(QSize(16, 16))
 
         self.horizontalLayout_7.addWidget(self.btn_download_anexo_professor)
 
@@ -590,8 +599,8 @@ class Ui_MainWindow(object):
         self.btn_anexo_aluno.setEnabled(True)
         self.btn_anexo_aluno.setMaximumSize(QSize(16777215, 60))
         self.btn_anexo_aluno.setStyleSheet(u"color: rgb(255, 255, 255);")
-        self.btn_anexo_aluno.setIcon(icon)
-        self.btn_anexo_aluno.setIconSize(QSize(25, 30))
+        self.btn_anexo.setIcon(btn_anexo_pixmap)
+        self.btn_anexo.setIconSize(QSize(20, 30))
 
         self.horizontalLayout_11.addWidget(self.btn_anexo_aluno)
 
@@ -609,7 +618,9 @@ class Ui_MainWindow(object):
         self.btn_download_anexo_aluno = QToolButton(self.frame_mid_2)
         self.btn_download_anexo_aluno.setObjectName(u"btn_download_anexo_aluno")
         self.btn_download_anexo_aluno.setStyleSheet(u"background-color: rgb(255, 255, 255);")
-        self.btn_download_anexo_aluno.setIcon(icon1)
+        btn_upload_pixmap = QPixmap('ui/icons/upload.png')
+        self.btn_download_anexo_aluno.setIcon(btn_upload_pixmap)
+        self.btn_download_anexo_aluno.setIconSize(QSize(16, 16))
 
         self.horizontalLayout_11.addWidget(self.btn_download_anexo_aluno)
 
@@ -776,9 +787,9 @@ class Ui_MainWindow(object):
         self.lbl_tarefas.setText(QCoreApplication.translate("MainWindow",
                                                             u"<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">TAREFAS</span></p></body></html>",
                                                             None))
-        self.btn_criar.setText(QCoreApplication.translate("MainWindow", u"Criar", None))
-        self.btn_editar.setText(QCoreApplication.translate("MainWindow", u"Editar", None))
-        self.btn_deletar.setText(QCoreApplication.translate("MainWindow", u"Excluir", None))
+        # self.btn_criar.setText(QCoreApplication.translate("MainWindow", u"Criar", None))
+        # self.btn_editar.setText(QCoreApplication.translate("MainWindow", u"Editar", None))
+        # self.btn_deletar.setText(QCoreApplication.translate("MainWindow", u"Excluir", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"ID", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
@@ -1113,10 +1124,10 @@ class Ui_MainWindow(object):
         msg_box.setWindowTitle(f"{button.text()} Tarefa")
 
         try:
-            match button.text():
-                case "Criar":
+            match button.objectName():
+                case "btn_criar":
                     self.configuracoes_criar_tarefa()
-                case "Editar":
+                case "btn_editar":
                     self.configuracoes_editar_tarefa()
 
             self.stackedWidget.setCurrentWidget(self.page_criacao)
